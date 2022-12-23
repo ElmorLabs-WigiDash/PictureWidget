@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Color = System.Drawing.Color;
 
 namespace PictureWidget {
     /// <summary>
@@ -40,8 +41,18 @@ namespace PictureWidget {
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
             textBoxFile.Text = parent.image_path;
             try {
-                textBoxColor.Text = ColorTranslator.ToHtml(parent.BackColor);
+                bgColorSelect.Content = ColorTranslator.ToHtml(parent.BackColor);
             } catch { }
+        }
+
+        private void colorSelect_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button caller)
+            {
+                Color defaultColor = ColorTranslator.FromHtml(caller.Content.ToString());
+                Color selectedColor = parent.WidgetObject.WidgetManager.RequestColorSelection(defaultColor);
+                caller.Content = ColorTranslator.ToHtml(selectedColor);
+            }
         }
 
         private void buttonFile_Click(object sender, RoutedEventArgs e) {
@@ -66,7 +77,7 @@ namespace PictureWidget {
         private void buttonApply_Click(object sender, RoutedEventArgs e) {
 
             try {
-                parent.BackColor = ColorTranslator.FromHtml(textBoxColor.Text);
+                parent.BackColor = ColorTranslator.FromHtml(bgColorSelect.Content.ToString());
             } catch { }
 
             switch(comboBoxType.SelectedIndex) {

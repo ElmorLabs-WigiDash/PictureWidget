@@ -219,6 +219,7 @@ namespace PictureWidget {
 
                            UpdateWidget();
                            drawing_mutex.ReleaseMutex();
+                           Thread.Sleep(2900);
                         }
                     }
 
