@@ -63,8 +63,6 @@ namespace PictureWidget {
 
         private Point Offset = Point.Empty;
 
-        public Guid ActionGuid = Guid.NewGuid();
-
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
         public Font OverlayFont;
@@ -410,7 +408,6 @@ namespace PictureWidget {
             parent.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
             parent.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
             parent.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
-            parent.WidgetManager.StoreSetting(this, "HotkeyAction", ActionGuid.ToString());
 
             parent.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
             parent.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
@@ -438,11 +435,6 @@ namespace PictureWidget {
                         }
                     }
                 }
-            }
-
-            if (parent.WidgetManager.LoadSetting(this, "HotkeyAction", out string actionGuidString))
-            {
-                Guid.TryParse(actionGuidString, out ActionGuid);
             }
 
             if (parent.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))

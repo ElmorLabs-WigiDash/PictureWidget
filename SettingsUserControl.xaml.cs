@@ -39,7 +39,7 @@ namespace PictureWidget {
             comboBoxType.Items.Add("Folder");
 
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
-            textBoxFile.Text = parent.image_path;
+            textBoxFile.Text = parent.ImagePath;
             try {
                 bgColorSelect.Content = ColorTranslator.ToHtml(parent.BackColor);
             } catch { }
@@ -53,8 +53,6 @@ namespace PictureWidget {
 
             overlayFontSelect.Content = new FontConverter().ConvertToInvariantString(parent.OverlayFont);
             overlayFontSelect.Tag = parent.OverlayFont;
-
-            actionType.Content = parent.WidgetObject.WidgetManager.GetActionString(_parentDevice, _actionGuid);
         }
 
         private void colorSelect_OnClick(object sender, RoutedEventArgs e)
@@ -113,17 +111,6 @@ namespace PictureWidget {
 
             parent.RequestUpdate();
             parent.SaveSettings();
-        }
-
-        private void ActionButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            parent.WidgetObject.WidgetManager.RemoveAction(_parentDevice, parent.ActionGuid);
-            bool addSuccess = parent.WidgetObject.WidgetManager.CreateAction(_parentDevice, parent.ActionGuid, parent.Guid.ToString(), out Guid actionGuid);
-
-            if (!addSuccess || actionGuid == Guid.Empty) return;
-
-            actionType.Content = parent.WidgetObject.WidgetManager.GetActionString(_parentDevice, actionGuid);
-            _actionGuid = actionGuid;
         }
 
         private void overlayFontSelect_Click(object sender, RoutedEventArgs e)

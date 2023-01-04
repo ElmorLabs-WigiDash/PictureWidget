@@ -66,15 +66,6 @@
             <Button x:Name="overlayColorSelect" Grid.Column="1" Click="colorSelect_OnClick" HorizontalAlignment="Stretch"></Button>
         </Grid>
 
-        <Grid Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="actionButton" Content="Set Action" Click="ActionButton_OnClick"  Margin="2" HorizontalAlignment="Stretch" Background="{DynamicResource PrimaryBrush}"/>
-            <Label Grid.Column="1" x:Name="actionType" Content="" HorizontalAlignment="Stretch" FontSize="10"/>
-        </Grid>
-
         <Button x:Name="buttonApply" Content="Save" Click="buttonApply_Click" Margin="2" HorizontalAlignment="Stretch" Width="220" Background="{DynamicResource PrimaryBrush}"/>
     </StackPanel>
 </UserControl>
