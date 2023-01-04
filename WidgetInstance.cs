@@ -125,13 +125,8 @@ namespace PictureWidget {
             Size Size = widget_size.ToSize();
 
             BitmapCurrent = new Bitmap(Size.Width, Size.Height);
-            if(drawing_mutex.WaitOne(mutex_timeout)) {
-                using(Graphics g = Graphics.FromImage(BitmapCurrent)) {
-                    g.Clear(Color.Gray);
-                }
-                drawing_mutex.ReleaseMutex();
-            }
-
+            
+            BlankWidget();
             LoadSettings();
 
         }
