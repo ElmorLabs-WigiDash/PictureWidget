@@ -343,9 +343,9 @@ namespace PictureWidget {
 
             try {
                 // Load image
-                img = Image.FromFile(path);
+                if (File.Exists(path)) img = Image.FromFile(path);
             } catch(Exception ex) {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
 
             if(img != null) {
