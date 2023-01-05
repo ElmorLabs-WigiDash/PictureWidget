@@ -165,7 +165,7 @@ namespace PictureWidget {
             while(run_task) {
 
                 while(pause_task) {
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                 }
 
                 if(WidgetType == PictureWidgetType.Single) {
@@ -181,15 +181,13 @@ namespace PictureWidget {
                             DrawOverlay();
 
                             drawing_mutex.ReleaseMutex();
-                            Thread.Sleep(animated_gif.Images[current_frame].Duration);
-                            current_frame++;
-                            if(current_frame == animated_gif.Images.Count) {
-                                current_frame = 0;
-                            }
+                            UpdateWidget();
                         }
                     } catch(Exception ex) { }
 
                 } else if(WidgetType == PictureWidgetType.Folder) {
+                    // Clear animated gif
+                    animated_gif = null;
 
                     // Show next picture
 
@@ -238,18 +236,33 @@ namespace PictureWidget {
                             } catch(Exception ex) {
                             }
 
-                           UpdateWidget();
-                           drawing_mutex.ReleaseMutex();
-                           Thread.Sleep(2900);
+                            drawing_mutex.ReleaseMutex();
+                            UpdateWidget();
                         }
                     }
 
+                    
+                }
+
+                if (animated_gif == null)
+                {
+                    Thread.Sleep(5000);
                     current_frame++;
-                    if(current_frame == FolderImages.Count) {
+                    if (current_frame == FolderImages.Count)
+                    {
                         current_frame = 0;
                     }
+                }
+                else
+                {
+                    if (animated_gif.Images[current_frame].Duration < 0) Thread.Sleep(200);
+                    else Thread.Sleep(animated_gif.Images[current_frame].Duration);
 
-                    Thread.Sleep(5000);
+                    current_frame++;
+                    if (current_frame == animated_gif.Images.Count && animated_gif != null)
+                    {
+                        current_frame = 0;
+                    }
                 }
             }
 
