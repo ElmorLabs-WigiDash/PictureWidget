@@ -118,6 +118,7 @@ namespace PictureWidget {
         public PictureWidgetInstance(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
         {
             Initialize(parent, widget_size, instance_guid);
+            LoadSettings();
         }
 
         public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
@@ -132,7 +133,6 @@ namespace PictureWidget {
             BitmapCurrent = new Bitmap(Size.Width, Size.Height);
 
             BlankWidget();
-            LoadSettings();
         }
 
         private void UpdateWidget() {
