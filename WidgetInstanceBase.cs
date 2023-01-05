@@ -7,12 +7,7 @@ using System.Windows.Controls;
 namespace PictureWidget {
     public partial class PictureWidgetInstance : IWidgetInstance {
 
-        private PictureWidget parent;
-        public IWidgetObject WidgetObject { 
-            get {
-                return parent;
-            }
-        }
+        public IWidgetObject WidgetObject { get; set; }
 
         public Guid Guid { get; set; }
 

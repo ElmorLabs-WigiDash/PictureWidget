@@ -71,7 +71,6 @@ namespace PictureWidget {
                 return GetWidgetPreview(new WidgetSize(1, 1));
             }
         }
-
     }
 
 }

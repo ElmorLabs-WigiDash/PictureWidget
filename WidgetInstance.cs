@@ -49,13 +49,13 @@ namespace PictureWidget {
 
         // Class specific
         private Mutex drawing_mutex = new Mutex();
-        private const int mutex_timeout = 1000;
+        public const int mutex_timeout = 1000;
 
         private Thread task_thread;
         private volatile bool run_task = false;
         private volatile bool pause_task = false;
         
-        private Bitmap BitmapCurrent;
+        public Bitmap BitmapCurrent;
 
         public bool UseGlobal = false;
 
@@ -103,9 +103,9 @@ namespace PictureWidget {
             public int Duration { get { return mDuration; } }
         }
 
-        AnimatedGif animated_gif;
+        public AnimatedGif animated_gif;
 
-        int current_frame;
+        public int current_frame;
 
         public string ImagePath = "";
 
@@ -115,9 +115,14 @@ namespace PictureWidget {
 
         private List<string> FolderImages;
 
-        public PictureWidgetInstance(PictureWidget parent, WidgetSize widget_size, Guid instance_guid) {
+        public PictureWidgetInstance(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
+        {
+            Initialize(parent, widget_size, instance_guid);
+        }
 
-            this.parent = parent;
+        public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
+        {
+            this.WidgetObject = parent;
             this.Guid = instance_guid;
 
             this.WidgetSize = widget_size;
@@ -125,10 +130,9 @@ namespace PictureWidget {
             Size Size = widget_size.ToSize();
 
             BitmapCurrent = new Bitmap(Size.Width, Size.Height);
-            
+
             BlankWidget();
             LoadSettings();
-
         }
 
         private void UpdateWidget() {
@@ -151,7 +155,7 @@ namespace PictureWidget {
             {
                 using (Graphics g = Graphics.FromImage(BitmapCurrent))
                 {
-                    Color clearColor = UseGlobal ? parent.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
+                    Color clearColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
                     g.Clear(clearColor);
                 }
                 DrawOverlay();
@@ -272,10 +276,10 @@ namespace PictureWidget {
         {
             using (Graphics g = Graphics.FromImage(BitmapCurrent))
             {
-                Color overlayColor = UseGlobal ? parent.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
+                Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
                 Brush overlayBrush = new SolidBrush(overlayColor);
 
-                Font overlayFont = UseGlobal ? parent.WidgetManager.GlobalWidgetTheme.PrimaryFont : OverlayFont;
+                Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont : OverlayFont;
 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
@@ -399,7 +403,7 @@ namespace PictureWidget {
                     pause_task = false;
                     run_task = true;
 
-                    ThreadStart thread_start = new ThreadStart(UpdateTask);
+                    ThreadStart thread_start = UpdateTask;
                     task_thread = new Thread(thread_start);
                     task_thread.IsBackground = true;
                     task_thread.Start();
@@ -413,15 +417,15 @@ namespace PictureWidget {
         }
 
         public void SaveSettings() {
-            parent.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
-            parent.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
-            parent.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
+            WidgetObject.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
+            WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
 
-            parent.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
-            parent.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
-            parent.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
+            WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
+            WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
+            WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
 
-            parent.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
 
             if (ImagePath == "") BlankWidget();
         }
@@ -431,8 +435,8 @@ namespace PictureWidget {
             int widget_version;
 
             string path, type;
-            if(parent.WidgetManager.LoadSetting(this, "ImagePath", out path)) {
-                if(parent.WidgetManager.LoadSetting(this, "WidgetType", out type)) {
+            if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out path)) {
+                if(WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out type)) {
                     int widget_type;
                     if(int.TryParse(type, out widget_type)) {
                         switch(widget_type) {
@@ -445,12 +449,12 @@ namespace PictureWidget {
                 }
             }
 
-            if (parent.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))
             {
                 OverlayText = overlayText;
             }
 
-            if (parent.WidgetManager.LoadSetting(this, "OverlayFont", out var strOverlayFont))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayFont", out var strOverlayFont))
             {
                 OverlayFont = new FontConverter().ConvertFromInvariantString(strOverlayFont) as Font;
             }
@@ -459,17 +463,17 @@ namespace PictureWidget {
                 OverlayFont = new Font("Basic Square 7 Solid", 20);
             }
 
-            if (parent.WidgetManager.LoadSetting(this, "OverlayColor", out string fgColor))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayColor", out string fgColor))
             {
                 OverlayColor = ColorTranslator.FromHtml(fgColor);
             }
 
-            if (parent.WidgetManager.LoadSetting(this, "UseGlobalTheme", out string globalTheme))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "UseGlobalTheme", out string globalTheme))
             {
                 bool.TryParse(globalTheme, out UseGlobal);
             }
 
-            if (parent.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
             {
                 BackColor = ColorTranslator.FromHtml(bgColor);
                 BlankWidget();
