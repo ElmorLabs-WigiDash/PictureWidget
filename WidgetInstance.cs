@@ -1,12 +1,12 @@
-﻿using WigiDashWidgetFramework;
-using WigiDashWidgetFramework.WidgetUtility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using WigiDashWidgetFramework;
+using WigiDashWidgetFramework.WidgetUtility;
 
 namespace PictureWidget {
     public partial class PictureWidgetInstance {
@@ -66,6 +66,8 @@ namespace PictureWidget {
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
         public Font OverlayFont;
+        public int OverlayXOffset = 0;
+        public int OverlayYOffset = 0;
 
         // https://social.microsoft.com/Forums/en-US/fcb7d14d-d15b-4336-971c-94a80e34b85e/editing-animated-gifs-in-c?forum=netfxbcl
         public class AnimatedGif {
@@ -283,8 +285,12 @@ namespace PictureWidget {
 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
-                SizeF measuredString = g.MeasureString(OverlayText, overlayFont);
-                g.DrawString(OverlayText, overlayFont, overlayBrush, (WidgetSize.ToSize().Width - measuredString.Width) / 2, (WidgetSize.ToSize().Height - measuredString.Height) / 2);
+                StringFormat format = new StringFormat(StringFormat.GenericTypographic);
+
+                format.Alignment = StringAlignment.Center;
+                format.LineAlignment = StringAlignment.Center;
+
+                g.DrawString(OverlayText, overlayFont, overlayBrush, new Rectangle(OverlayXOffset, OverlayYOffset, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height), format);
             }
         }
 

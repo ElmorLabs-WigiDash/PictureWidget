@@ -109,6 +109,9 @@ namespace PictureWidget {
             parent.OverlayFont = overlayFontSelect.Tag as Font;
             parent.UseGlobal = globalThemeCheck.IsChecked ?? false;
 
+            parent.OverlayXOffset = lastValidXOffset;
+            parent.OverlayYOffset = lastValidYOffset;
+
             parent.RequestUpdate();
             parent.SaveSettings();
         }
@@ -123,6 +126,45 @@ namespace PictureWidget {
                 caller.Content = new FontConverter().ConvertToInvariantString(selectedFont);
                 caller.Tag = selectedFont;
             }
+        }
+
+        private int lastValidXOffset = 0;
+        private int lastValidYOffset = 0;
+        private void OverlayXOffset_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            bool result = int.TryParse(e.Text, out int lastInput);
+            if (!result)
+            {
+                e.Handled = true;
+                //OverlayXOffset.Text = lastValidXOffset.ToString();
+            } else
+            {
+                int.TryParse(OverlayXOffset.Text, out lastValidXOffset);
+            }
+        }
+
+        private void OverlayYOffset_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            bool result = int.TryParse(e.Text, out int lastInput);
+            if (!result)
+            {
+                e.Handled = true;
+                //OverlayYOffset.Text = lastValidYOffset.ToString();
+            }
+            else
+            {
+                int.TryParse(OverlayYOffset.Text, out lastValidYOffset);
+            }
+        }
+
+        private void OverlayOffset_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Copy ||
+             e.Command == ApplicationCommands.Cut ||
+             e.Command == ApplicationCommands.Paste)
+                {
+                    e.Handled = true;
+                }
         }
     }
 }
