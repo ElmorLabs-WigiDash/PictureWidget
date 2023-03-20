@@ -287,10 +287,10 @@ namespace PictureWidget {
 
                 StringFormat format = new StringFormat(StringFormat.GenericTypographic);
 
-                format.Alignment = StringAlignment.Center;
-                format.LineAlignment = StringAlignment.Center;
+                //format.Alignment = StringAlignment.Center;
+                //format.LineAlignment = StringAlignment.Center;
 
-                g.DrawString(OverlayText, overlayFont, overlayBrush, new Rectangle(OverlayXOffset, OverlayYOffset, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height), format);
+                g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
             }
         }
 
@@ -430,6 +430,8 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
+            WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXOffset), OverlayXOffset.ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYOffset), OverlayYOffset.ToString());
 
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
 
@@ -472,6 +474,16 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayColor", out string fgColor))
             {
                 OverlayColor = ColorTranslator.FromHtml(fgColor);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayXOffset), out string overlayXOffsetStr))
+            {
+                int.TryParse(overlayXOffsetStr, out OverlayXOffset);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayYOffset), out string overlayYOffsetStr))
+            {
+                int.TryParse(overlayYOffsetStr, out OverlayYOffset);
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "UseGlobalTheme", out string globalTheme))

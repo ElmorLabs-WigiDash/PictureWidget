@@ -133,7 +133,7 @@ namespace PictureWidget {
         private void OverlayXOffset_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             bool result = int.TryParse(e.Text, out int lastInput);
-            if (!result)
+            if (!result && e.Text != "-")
             {
                 e.Handled = true;
                 //OverlayXOffset.Text = lastValidXOffset.ToString();
@@ -146,7 +146,7 @@ namespace PictureWidget {
         private void OverlayYOffset_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             bool result = int.TryParse(e.Text, out int lastInput);
-            if (!result)
+            if (!result && e.Text != "-")
             {
                 e.Handled = true;
                 //OverlayYOffset.Text = lastValidYOffset.ToString();
