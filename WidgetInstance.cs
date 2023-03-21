@@ -61,8 +61,6 @@ namespace PictureWidget {
 
         public Color BackColor = Color.FromArgb(35, 35, 35);
 
-        private Point Offset = Point.Empty;
-
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
         public Font OverlayFont;
@@ -160,7 +158,6 @@ namespace PictureWidget {
                     Color clearColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
                     g.Clear(clearColor);
                 }
-                DrawOverlay();
                 drawing_mutex.ReleaseMutex();
             }
             UpdateWidget();
@@ -179,12 +176,12 @@ namespace PictureWidget {
                         // Show next frame
                         if(animated_gif != null && drawing_mutex.WaitOne(mutex_timeout)) {
                             //lock(BitmapCurrent) {
-                                using(Graphics g = Graphics.FromImage(BitmapCurrent)) {
-                                    g.DrawImage(animated_gif.Images[current_frame].Image, Offset);
-                                }
-                            //}
-
+                            using (Graphics g = Graphics.FromImage(BitmapCurrent)) {
+                                g.Clear(BackColor);
+                                g.DrawImageZoomedToFit(animated_gif.Images[current_frame].Image, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+                            }
                             DrawOverlay();
+                            //}
 
                             drawing_mutex.ReleaseMutex();
                             UpdateWidget();
@@ -211,31 +208,13 @@ namespace PictureWidget {
                         if(drawing_mutex.WaitOne(mutex_timeout)) {
                         //lock(BitmapCurrent) { 
                             try {
-                                // Calculate width
-                                int width = img.Width;
-                                int height = img.Height;
                                 lock(BitmapCurrent) {
-                                    if(width > BitmapCurrent.Width) {
-                                        width = BitmapCurrent.Width;
-                                        height = (int)(width * (BitmapCurrent.Height * 1.0f / BitmapCurrent.Width));
-                                    }
-                                    if(height > BitmapCurrent.Height) {
-                                        height = BitmapCurrent.Height;
-                                        width = (int)(height * (BitmapCurrent.Width * 1.0f / BitmapCurrent.Height));
-                                    }
-
-                                    if(width > 0 && height > 0) {
-
-                                        // Caluculate offset
-                                        Offset.X = (BitmapCurrent.Width - width) / 2;
-                                        Offset.Y = (BitmapCurrent.Height - height) / 2;
-
+                                    if(img.Width > 0 && img.Height > 0) {
                                         // Draw image
-                                        using(Graphics g = Graphics.FromImage(BitmapCurrent)) {
-                                            g.Clear(Color.Black);
-                                            g.DrawImage(img, Offset.X, Offset.Y, width, height);
+                                        using (Graphics g = Graphics.FromImage(BitmapCurrent)) {
+                                            g.Clear(BackColor);
+                                            g.DrawImageZoomedToFit(img, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
                                         }
-
                                         DrawOverlay();
                                     }
                                 }
@@ -286,9 +265,6 @@ namespace PictureWidget {
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
                 StringFormat format = new StringFormat(StringFormat.GenericTypographic);
-
-                //format.Alignment = StringAlignment.Center;
-                //format.LineAlignment = StringAlignment.Center;
 
                 g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
             }
@@ -355,37 +331,18 @@ namespace PictureWidget {
             }
 
             if(img != null) {
-
-                // Calculate width
-                int width = img.Width;
-                int height = img.Height;
-
                 //lock(BitmapCurrent) {
                 if(drawing_mutex.WaitOne(mutex_timeout)) {
-                    if(width > BitmapCurrent.Width) {
-                        width = BitmapCurrent.Width;
-                        height = (int)(width * (BitmapCurrent.Height * 1.0f / BitmapCurrent.Width));
-                    }
-                    if(height > BitmapCurrent.Height) {
-                        height = BitmapCurrent.Height;
-                        width = (int)(height * (BitmapCurrent.Width * 1.0f / BitmapCurrent.Height));
-                    }
-
-                    // Caluculate offset
-                    Offset.X = (BitmapCurrent.Width - width) / 2;
-                    Offset.Y = (BitmapCurrent.Height - height) / 2;
-
                     // Draw image
                     //lock(BitmapCurrent) {
                     using(Graphics g = Graphics.FromImage(BitmapCurrent)) {
-                        g.Clear(Color.Black);
+                        g.Clear(BackColor);
                         if(animated_gif == null) {
-                            g.DrawImage(img, Offset.X, Offset.Y, width, height);
+                            g.Clear(BackColor);
+                            g.DrawImageZoomedToFit(img, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
                         }
                     }
-
                     DrawOverlay();
-
                     UpdateWidget();
                     drawing_mutex.ReleaseMutex();
                 }
@@ -395,7 +352,7 @@ namespace PictureWidget {
                 try {
                     int frames = img.GetFrameCount(FrameDimension.Time);
                     if(frames > 1) {
-                        animated_gif = new AnimatedGif(img, frames, width, height);
+                        animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
                         current_frame = 0;
                     }
                 } catch(Exception ex) { }
@@ -435,13 +392,13 @@ namespace PictureWidget {
 
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
 
-            if (ImagePath == "") BlankWidget();
+            if (ImagePath == "")
+            {
+                BlankWidget();
+            }
         }
 
         public void LoadSettings() {
-
-            int widget_version;
-
             string path, type;
             if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out path)) {
                 if(WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out type)) {
@@ -495,7 +452,6 @@ namespace PictureWidget {
             {
                 BackColor = ColorTranslator.FromHtml(bgColor);
                 BlankWidget();
-                DrawOverlay();
             }
         }
     }
