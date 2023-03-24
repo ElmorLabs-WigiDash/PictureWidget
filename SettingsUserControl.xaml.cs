@@ -93,17 +93,12 @@ namespace PictureWidget {
 
             switch(comboBoxType.SelectedIndex) {
                 case (int)PictureWidgetInstance.PictureWidgetType.Single:
-                    if(File.Exists(textBoxFile.Text)) {
-                        parent.LoadImage(textBoxFile.Text);
-                    }
+                    parent.LoadImage(textBoxFile.Text);
                     break;
                 case (int)PictureWidgetInstance.PictureWidgetType.Folder:
-                    if(Directory.Exists(textBoxFile.Text)) {
-                        parent.LoadFolder(textBoxFile.Text);
-                    }
+                    parent.LoadFolder(textBoxFile.Text);
                     break;
             }
-
 
             parent.OverlayText = textOverlay.Text;
             parent.OverlayFont = overlayFontSelect.Tag as Font;
