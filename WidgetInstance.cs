@@ -14,17 +14,20 @@ namespace PictureWidget {
 
         // Functionality
         public void RequestUpdate() {
-            UpdateWidget();
+            if (drawing_mutex.WaitOne(mutex_timeout))
+            {
+                UpdateWidget();
+                drawing_mutex.ReleaseMutex();
+            }
         }
 
         public void ClickEvent(ClickType click_type, int x, int y) {
             if(click_type == ClickType.Single) {
-                //pause_task = !pause_task;
             }
         }
 
         public void Dispose() {
-            pause_task = false;
+            pause_task = true;
             run_task = false;
         }
 
@@ -33,9 +36,6 @@ namespace PictureWidget {
         }
 
         public void ExitSleep() {
-            //lock(BitmapCurrent) {
-                //UpdateWidget();
-            //}
             if(drawing_mutex.WaitOne(mutex_timeout)) {
                 UpdateWidget();
                 drawing_mutex.ReleaseMutex();
@@ -45,7 +45,7 @@ namespace PictureWidget {
 
         // Class specific
         private Mutex drawing_mutex = new Mutex();
-        public const int mutex_timeout = 1000;
+        public const int mutex_timeout = 100;
 
         private Thread task_thread;
         private volatile bool run_task = false;
@@ -101,7 +101,7 @@ namespace PictureWidget {
 
         public AnimatedGif animated_gif;
 
-        public int current_frame;
+        public volatile int current_frame;
 
         public string ImagePath = "";
 
@@ -109,7 +109,7 @@ namespace PictureWidget {
 
         public PictureWidgetType WidgetType;
 
-        private List<string> FolderImages;
+        private List<string> FolderImages = new List<string>();
 
         public PictureWidgetInstance(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
         {
@@ -127,145 +127,102 @@ namespace PictureWidget {
             Size Size = widget_size.ToSize();
 
             BitmapCurrent = new Bitmap(Size.Width, Size.Height);
+            OverlayFont = new Font("Basic Square 7 Solid", 20);
 
-            BlankWidget();
+            pause_task = false;
+            run_task = true;
+
+            ThreadStart thread_start = new ThreadStart(UpdateTask);
+            task_thread = new Thread(thread_start);
+            task_thread.IsBackground = true;
+            task_thread.Start();
         }
 
         private void UpdateWidget() {
             if (BitmapCurrent != null)
             {
                 WidgetUpdatedEventArgs e = new WidgetUpdatedEventArgs();
-                e.Offset = Point.Empty;
-                if (animated_gif != null)
-                {
-                    e.WaitMax = animated_gif.Images[current_frame].Duration;
-                }
-                else
-                {
-                    e.WaitMax = mutex_timeout;
-                }
+                e.WaitMax = 1000;
                 e.WidgetBitmap = BitmapCurrent;
 
                 WidgetUpdated?.Invoke(this, e);
             }
         }
 
-        private void BlankWidget()
+        private int FrameMs = 100;
+
+        private void UpdateTask() {
+            while(run_task) {
+
+                FrameMs = 100;
+
+                while(pause_task) {
+                    Thread.Sleep(FrameMs);
+                }
+
+                DrawFrame();
+                current_frame++;
+                Thread.Sleep(FrameMs);
+            }
+        }
+
+        private void DrawFrame()
         {
-            //BitmapCurrent = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
             if (drawing_mutex.WaitOne(mutex_timeout))
             {
                 using (Graphics g = Graphics.FromImage(BitmapCurrent))
                 {
-                    Color clearColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
-                    g.Clear(clearColor);
-                }
-                drawing_mutex.ReleaseMutex();
-            }
-            UpdateWidget();
-        }
+                    g.Clear(BackColor);
 
-        private void UpdateTask() {
+                    Image imageToDraw = null;
 
-            while(run_task) {
-
-                while(pause_task) {
-                    Thread.Sleep(100);
-                }
-
-                if (drawing_mutex.WaitOne(mutex_timeout))
-                {
                     if (WidgetType == PictureWidgetType.Single)
                     {
-                        try
+                        if (ImagePath != "" && File.Exists(ImagePath))
                         {
-                            using (Graphics g = Graphics.FromImage(BitmapCurrent))
+                            // GIF
+                            if (animated_gif != null)
                             {
-                                if (animated_gif != null)
+                                if (current_frame > animated_gif.Images.Count - 1)
                                 {
-                                    g.Clear(BackColor);
-                                    g.DrawImageZoomedToFit(animated_gif.Images[current_frame].Image, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+                                    current_frame = 0;
                                 }
-                                else if (File.Exists(ImagePath))
-                                {
-                                    g.Clear(BackColor);
-                                    g.DrawImageZoomedToFit(Image.FromFile(ImagePath), WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
-                                }
+
+                                imageToDraw = animated_gif.Images[current_frame].Image;
+                                FrameMs = animated_gif.Images[current_frame].Duration;
                             }
-                        }
-                        catch (Exception ex) { }
-                    }
-                    else if (WidgetType == PictureWidgetType.Folder)
-                    {
-                        // Clear animated gif
-                        animated_gif = null;
 
-                        // Show next picture
-
-                        // Load image
-                        Bitmap img = null;
-
-                        try
-                        {
-                            img = new Bitmap(FolderImages[current_frame]);
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                        if (drawing_mutex.WaitOne(mutex_timeout))
-                        {
-                            if (img != null)
+                            // Normal Image
+                            else
                             {
-                                //lock(BitmapCurrent) { 
-                                try
-                                {
-                                    lock (BitmapCurrent)
-                                    {
-                                        if (img.Width > 0 && img.Height > 0)
-                                        {
-                                            // Draw image
-                                            using (Graphics g = Graphics.FromImage(BitmapCurrent))
-                                            {
-                                                g.Clear(BackColor);
-                                                g.DrawImageZoomedToFit(img, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
-                                            }
-
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                }
+                                imageToDraw = Image.FromFile(ImagePath);
                             }
                         }
                     }
-
-                    DrawOverlay();
-                    drawing_mutex.ReleaseMutex();
-                    UpdateWidget();
-                }
-
-                if (animated_gif == null && FolderImages != null)
-                {
-                    Thread.Sleep(5000);
-                    current_frame++;
-                    if (current_frame == FolderImages.Count)
+                    else
                     {
-                        current_frame = 0;
-                    }
-                }
-                else if (animated_gif != null)
-                {
-                    if (animated_gif.Images[current_frame].Duration < 0) Thread.Sleep(200);
-                    else Thread.Sleep(animated_gif.Images[current_frame].Duration);
+                        if (current_frame > FolderImages.Count - 1)
+                        {
+                            current_frame = 0;
+                        }
 
-                    current_frame++;
-                    if (current_frame == animated_gif.Images.Count && animated_gif != null)
-                    {
-                        current_frame = 0;
+                        if (File.Exists(FolderImages[current_frame]))
+                        {
+                            imageToDraw = Image.FromFile(FolderImages[current_frame]);
+                            FrameMs = 5000;
+                        }
+                        else
+                        {
+                            FrameMs = 0;
+                        }
                     }
+
+                    if (imageToDraw != null) g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
                 }
+
+                DrawOverlay();
+                drawing_mutex.ReleaseMutex();
+                UpdateWidget();
             }
         }
 
@@ -276,23 +233,21 @@ namespace PictureWidget {
                 Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
                 Brush overlayBrush = new SolidBrush(overlayColor);
 
-                Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont : OverlayFont;
+                Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ??  new Font("Basic Square 7 Solid", 20) : OverlayFont;
 
                 g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
                 StringFormat format = new StringFormat(StringFormat.GenericTypographic);
 
-                g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
+                try
+                {
+                    g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
+                } catch { }
             }
         }
 
         public void LoadFolder(string path) {
-
-            run_task = false;
-
-            if(task_thread != null) {
-                task_thread.Join(500);
-            }
+            pause_task = true;
 
             current_frame = 0;
             ImagePath = path;
@@ -317,66 +272,36 @@ namespace PictureWidget {
                 }
             }
 
-            if(FolderImages.Count > 0) {
-                pause_task = false;
-                run_task = true;
-
-                ThreadStart thread_start = new ThreadStart(UpdateTask);
-                task_thread = new Thread(thread_start);
-                task_thread.IsBackground = true;
-                task_thread.Start();
-            }
+            pause_task = false;
         }
 
         public void LoadImage(string path) {
+            pause_task = true;
 
-            run_task = false;
-
-            if(task_thread != null && task_thread.IsAlive) {
-                pause_task = false;
-                task_thread.Join(500);
-            }
-
-            Image img = null;
             animated_gif = null;
 
-            try {
-                // Load image
-                if (File.Exists(path)) img = Image.FromFile(path);
-            } catch(Exception ex) {
-                //MessageBox.Show(ex.Message);
-            }
-
-            if (img != null)
+            // Handle gif
+            try
             {
-                // Handle gif
-                try
+                Image img = Image.FromFile(path);
+                int frames = img.GetFrameCount(FrameDimension.Time);
+                if (frames > 1)
                 {
-                    int frames = img.GetFrameCount(FrameDimension.Time);
-                    if (frames > 1)
-                    {
-                        animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
-                        current_frame = 0;
-                    }
+                    animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
+                    current_frame = 0;
                 }
-                catch (Exception ex) { }
             }
+            catch (Exception ex) { }
 
             ImagePath = path;
             WidgetType = PictureWidgetType.Single;
 
             pause_task = false;
-            run_task = true;
-
-            ThreadStart thread_start = UpdateTask;
-            task_thread = new Thread(thread_start);
-            task_thread.IsBackground = true;
-            task_thread.Start();
         }
         
         public void UpdateSettings()
         {
-            LoadImage(ImagePath);
+            DrawFrame();
         }
 
         public void SaveSettings() {
@@ -391,20 +316,17 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYOffset), OverlayYOffset.ToString());
 
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
-
-            if (ImagePath == "")
-            {
-                BlankWidget();
-            }
         }
 
         public void LoadSettings() {
-            string path, type;
-            if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out path)) {
-                if(WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out type)) {
+            if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out string path)) {
+                if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
+                {
                     int widget_type;
-                    if(int.TryParse(type, out widget_type)) {
-                        switch(widget_type) {
+                    if (int.TryParse(type, out widget_type))
+                    {
+                        switch (widget_type)
+                        {
                             case (int)PictureWidgetType.Single:
                                 LoadImage(path); break;
                             case (int)PictureWidgetType.Folder:
@@ -412,7 +334,7 @@ namespace PictureWidget {
                         }
                     }
                 }
-            }
+            }            
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))
             {
@@ -451,7 +373,6 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
             {
                 BackColor = ColorTranslator.FromHtml(bgColor);
-                BlankWidget();
             }
         }
     }
