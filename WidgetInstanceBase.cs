@@ -13,8 +13,14 @@ namespace PictureWidget {
 
         public WidgetSize WidgetSize { get; set; }
 
+        private SettingsUserControl _userControl;
+
         public UserControl GetSettingsControl() {
-            return new SettingsUserControl(this);
+            if (_userControl == null)
+            {
+                _userControl = new SettingsUserControl(this);
+            }
+            return _userControl;
         }
 
         // Events
