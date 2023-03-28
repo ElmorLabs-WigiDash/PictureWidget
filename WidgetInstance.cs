@@ -194,6 +194,9 @@ namespace PictureWidget {
 
                                 imageToDraw = animated_gif.Images[current_frame].Image;
                                 FrameMs = animated_gif.Images[current_frame].Duration;
+
+                                // Default GIF speed
+                                if (FrameMs < 0) FrameMs = 250;
                             }
 
                             // Normal Image
