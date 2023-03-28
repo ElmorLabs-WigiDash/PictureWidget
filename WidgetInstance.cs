@@ -139,13 +139,18 @@ namespace PictureWidget {
         }
 
         private void UpdateWidget() {
-            if (BitmapCurrent != null)
+            if (drawing_mutex.WaitOne(mutex_timeout))
             {
-                WidgetUpdatedEventArgs e = new WidgetUpdatedEventArgs();
-                e.WaitMax = 1000;
-                e.WidgetBitmap = BitmapCurrent;
+                if (BitmapCurrent != null)
+                {
+                    WidgetUpdatedEventArgs e = new WidgetUpdatedEventArgs();
+                    e.WaitMax = 1000;
+                    e.WidgetBitmap = new Bitmap(BitmapCurrent);
 
-                WidgetUpdated?.Invoke(this, e);
+                    WidgetUpdated?.Invoke(this, e);
+                }
+
+                drawing_mutex.ReleaseMutex();
             }
         }
 
@@ -166,7 +171,6 @@ namespace PictureWidget {
             }
         }
 
-        private string previousImagePath;
         private void DrawFrame()
         {
             if (drawing_mutex.WaitOne(mutex_timeout))
@@ -174,7 +178,6 @@ namespace PictureWidget {
                 using (Graphics g = Graphics.FromImage(BitmapCurrent))
                 {
                     g.Clear(BackColor);
-
                     Image imageToDraw = null;
 
                     if (WidgetType == PictureWidgetType.Single)
@@ -196,11 +199,7 @@ namespace PictureWidget {
                             // Normal Image
                             else
                             {
-                                if (previousImagePath != ImagePath)
-                                {
-                                    imageToDraw = Image.FromFile(ImagePath);
-                                    previousImagePath = ImagePath;
-                                }
+                                imageToDraw = Image.FromFile(ImagePath);
                             }
                         }
                     }
@@ -222,33 +221,35 @@ namespace PictureWidget {
                         }
                     }
 
-                    if (imageToDraw != null) g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+                    if (imageToDraw != null)
+                    {
+                        g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+                    }
+
+                    DrawOverlay(g);
                 }
 
-                DrawOverlay();
                 drawing_mutex.ReleaseMutex();
                 UpdateWidget();
             }
         }
 
-        public void DrawOverlay()
+        public void DrawOverlay(Graphics g)
         {
-            using (Graphics g = Graphics.FromImage(BitmapCurrent))
+            Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
+            Brush overlayBrush = new SolidBrush(overlayColor);
+
+            Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ?? new Font("Basic Square 7 Solid", 20) : OverlayFont;
+
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+            StringFormat format = new StringFormat(StringFormat.GenericTypographic);
+
+            try
             {
-                Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
-                Brush overlayBrush = new SolidBrush(overlayColor);
-
-                Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ??  new Font("Basic Square 7 Solid", 20) : OverlayFont;
-
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-
-                StringFormat format = new StringFormat(StringFormat.GenericTypographic);
-
-                try
-                {
-                    g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
-                } catch { }
+                g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
             }
+            catch { }
         }
 
         public void LoadFolder(string path) {
