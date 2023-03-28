@@ -166,6 +166,7 @@ namespace PictureWidget {
             }
         }
 
+        private string previousImagePath;
         private void DrawFrame()
         {
             if (drawing_mutex.WaitOne(mutex_timeout))
@@ -195,7 +196,11 @@ namespace PictureWidget {
                             // Normal Image
                             else
                             {
-                                imageToDraw = Image.FromFile(ImagePath);
+                                if (previousImagePath != ImagePath)
+                                {
+                                    imageToDraw = Image.FromFile(ImagePath);
+                                    previousImagePath = ImagePath;
+                                }
                             }
                         }
                     }
