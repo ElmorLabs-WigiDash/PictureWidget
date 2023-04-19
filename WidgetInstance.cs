@@ -145,7 +145,7 @@ namespace PictureWidget {
                 {
                     WidgetUpdatedEventArgs e = new WidgetUpdatedEventArgs();
                     e.WaitMax = 1000;
-                    e.WidgetBitmap = new Bitmap(BitmapCurrent);
+                    e.WidgetBitmap = BitmapCurrent;
 
                     WidgetUpdated?.Invoke(this, e);
                 }
@@ -170,6 +170,9 @@ namespace PictureWidget {
                 Thread.Sleep(FrameMs);
             }
         }
+
+        string cachedImagePath = "";
+        Image cachedImage = null;
 
         private void DrawFrame()
         {
@@ -202,7 +205,20 @@ namespace PictureWidget {
                             // Normal Image
                             else
                             {
-                                imageToDraw = Image.FromFile(ImagePath);
+                                if (cachedImagePath == ImagePath)
+                                {
+                                    imageToDraw = cachedImage;
+                                }
+                                else
+                                {
+                                    if (cachedImage != null)
+                                    {
+                                        cachedImage.Dispose();
+                                    }
+                                    imageToDraw = Image.FromFile(ImagePath);
+                                    cachedImagePath = ImagePath;
+                                    cachedImage = imageToDraw;
+                                }
                             }
                         }
                     }
@@ -215,7 +231,20 @@ namespace PictureWidget {
 
                         if (File.Exists(FolderImages[current_frame]))
                         {
-                            imageToDraw = Image.FromFile(FolderImages[current_frame]);
+                            if (cachedImagePath == FolderImages[current_frame])
+                            {
+                                imageToDraw = cachedImage;
+                            }
+                            else
+                            {
+                                if (cachedImage != null)
+                                {
+                                    cachedImage.Dispose();
+                                }
+                                imageToDraw = Image.FromFile(FolderImages[current_frame]);
+                                cachedImagePath = FolderImages[current_frame];
+                                cachedImage = imageToDraw;
+                            }
                             FrameMs = 5000;
                         }
                         else
@@ -227,7 +256,6 @@ namespace PictureWidget {
                     if (imageToDraw != null)
                     {
                         g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
-                        imageToDraw.Dispose();
                     }
 
                     DrawOverlay(g);
