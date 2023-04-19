@@ -154,12 +154,12 @@ namespace PictureWidget {
             }
         }
 
-        private int FrameMs = 100;
+        private int FrameMs = 250;
 
         private void UpdateTask() {
             while(run_task) {
 
-                FrameMs = 100;
+                FrameMs = 250;
 
                 while(pause_task) {
                     Thread.Sleep(FrameMs);
@@ -227,6 +227,7 @@ namespace PictureWidget {
                     if (imageToDraw != null)
                     {
                         g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+                        imageToDraw.Dispose();
                     }
 
                     DrawOverlay(g);
@@ -292,12 +293,14 @@ namespace PictureWidget {
             // Handle gif
             try
             {
-                Image img = Image.FromFile(path);
-                int frames = img.GetFrameCount(FrameDimension.Time);
-                if (frames > 1)
+                using (Image img = Image.FromFile(path))
                 {
-                    animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
-                    current_frame = 0;
+                    int frames = img.GetFrameCount(FrameDimension.Time);
+                    if (frames > 1)
+                    {
+                        animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
+                        current_frame = 0;
+                    }
                 }
             }
             catch (Exception ex) { }
