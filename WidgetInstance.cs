@@ -285,6 +285,7 @@ namespace PictureWidget {
         }
 
         public void LoadFolder(string path) {
+            if (!Directory.Exists(path)) return;
             pause_task = true;
 
             current_frame = 0;
@@ -314,6 +315,8 @@ namespace PictureWidget {
         }
 
         public void LoadImage(string path) {
+            if (!File.Exists(path)) return;
+
             pause_task = true;
 
             animated_gif = null;
