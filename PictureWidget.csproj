@@ -57,7 +57,6 @@
     <Compile Include="SettingsUserControl.xaml.cs">
       <DependentUpon>SettingsUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utility.cs" />
     <Compile Include="Widget.cs" />
     <Compile Include="WidgetBase.cs" />
     <Compile Include="WidgetInstance.cs" />
@@ -74,8 +73,8 @@
     <ProjectReference Include="..\..\WidgetFramework\WidgetFramework.csproj">
       <Project>{404649AD-4D43-4D04-8CD4-9D4CC1835907}</Project>
       <Name>WidgetFramework</Name>
-		<Private>false</Private>
-		<ExcludeAssets>all</ExcludeAssets>
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
