@@ -36,10 +36,6 @@ namespace PictureWidget {
         }
 
         public void ExitSleep() {
-            if(drawing_mutex.WaitOne(mutex_timeout)) {
-                UpdateWidget();
-                drawing_mutex.ReleaseMutex();
-            }
             pause_task = false;
         }
 
