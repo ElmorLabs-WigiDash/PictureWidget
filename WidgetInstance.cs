@@ -60,6 +60,8 @@ namespace PictureWidget {
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
         public Font OverlayFont;
+        public int OverlayXPos = 0;
+        public int OverlayYPos = 0;
         public int OverlayXOffset = 0;
         public int OverlayYOffset = 0;
 
@@ -258,7 +260,15 @@ namespace PictureWidget {
                         g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
                     }
 
-                    DrawOverlay(g);
+                    Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
+                    Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ?? new Font("Basic Square 7 Solid", 20) : OverlayFont;
+                    
+                    StringFormat overlayFormat = new StringFormat(StringFormat.GenericTypographic);
+                    overlayFormat.Alignment = GetStringAlignment(OverlayXPos);
+                    overlayFormat.LineAlignment = GetStringAlignment(OverlayYPos);
+                    overlayFormat.FormatFlags = overlayFormat.FormatFlags | StringFormatFlags.NoWrap;
+
+                    g.DrawOverlay(OverlayText, overlayColor, overlayFont, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height, OverlayXOffset, OverlayYOffset, overlayFormat);
                 }
 
                 drawing_mutex.ReleaseMutex();
@@ -266,22 +276,20 @@ namespace PictureWidget {
             }
         }
 
-        public void DrawOverlay(Graphics g)
+        public StringAlignment GetStringAlignment(int index)
         {
-            Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
-            Brush overlayBrush = new SolidBrush(overlayColor);
-
-            Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ?? new Font("Basic Square 7 Solid", 20) : OverlayFont;
-
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-
-            StringFormat format = new StringFormat(StringFormat.GenericTypographic);
-
-            try
+            switch(index)
             {
-                g.DrawString(OverlayText, overlayFont, overlayBrush, OverlayXOffset, OverlayYOffset, format);
+                default:
+                case 0:
+                    return StringAlignment.Center;
+
+                case 1:
+                    return StringAlignment.Near;
+
+                case 2:
+                    return StringAlignment.Far;
             }
-            catch { }
         }
 
         public void LoadFolder(string path) {
@@ -355,6 +363,10 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
+
+            WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXPos), OverlayXPos.ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYPos), OverlayYPos.ToString());
+
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXOffset), OverlayXOffset.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYOffset), OverlayYOffset.ToString());
 
@@ -396,6 +408,16 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayColor", out string fgColor))
             {
                 OverlayColor = ColorTranslator.FromHtml(fgColor);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayXPos), out string overlayXPosStr))
+            {
+                int.TryParse(overlayXPosStr, out OverlayXPos);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayYPos), out string overlayYPosStr))
+            {
+                int.TryParse(overlayYPosStr, out OverlayYPos);
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayXOffset), out string overlayXOffsetStr))
