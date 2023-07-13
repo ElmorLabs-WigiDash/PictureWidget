@@ -59,6 +59,8 @@ namespace PictureWidget {
 
             OverlayXOffset.Value = parent.OverlayXOffset;
             OverlayYOffset.Value = parent.OverlayYOffset;
+
+            globalThemeCheck.IsChecked = parent.UseGlobal;
         }
 
         private void colorSelect_OnClick(object sender, RoutedEventArgs e)
