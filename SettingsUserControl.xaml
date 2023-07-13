@@ -9,36 +9,38 @@
              d:Background="White"
              d:DesignHeight="500" d:DesignWidth="300" Margin="10, 25">
     <StackPanel>
-        <Grid Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Label Content="Type" HorizontalAlignment="Stretch" FontSize="10"/>
-            <ComboBox x:Name="comboBoxType" Height="23" Grid.Column="1" HorizontalAlignment="Stretch"/>
-        </Grid>
+        <Expander Header="Design" IsExpanded="True">
+            <StackPanel>
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Type" HorizontalAlignment="Stretch" FontSize="10"/>
+                    <ComboBox x:Name="comboBoxType" Height="23" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                </Grid>
+                
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="60"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="File Path" FontSize="10" HorizontalAlignment="Stretch"/>
+                    <TextBox x:Name="textBoxFile" IsManipulationEnabled="True" MaxLines="1" Grid.Column="1" HorizontalAlignment="Stretch" TextChanged="textBoxFile_TextChanged"/>
+                    <Button x:Name="buttonFile" Content="File..." Click="buttonFile_Click" Grid.Column="2" HorizontalAlignment="Stretch" FontSize="10" Background="{DynamicResource PrimaryBrush}"/>
+                </Grid>
 
-        <Grid Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="60"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Label Content="File Path" FontSize="10" HorizontalAlignment="Stretch"/>
-            <TextBox x:Name="textBoxFile" IsManipulationEnabled="True" MaxLines="1" Grid.Column="1" HorizontalAlignment="Stretch"/>
-            <Button x:Name="buttonFile" Content="File..." Click="buttonFile_Click" Grid.Column="2" HorizontalAlignment="Stretch" FontSize="10" Background="{DynamicResource PrimaryBrush}"/>
-        </Grid>
-
-        <CheckBox x:Name="globalThemeCheck" Height="20" VerticalContentAlignment="Center" VerticalAlignment="Center" Margin="6, 2" Content="Use Global Theme" FontSize="10"></CheckBox>
-
-        <Grid Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Label Content="Background Color" FontSize="10" HorizontalAlignment="Stretch"/>
-            <Button x:Name="bgColorSelect" Grid.Column="1" Click="colorSelect_OnClick" HorizontalAlignment="Stretch"></Button>
-        </Grid>
+                <Grid Margin="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Background Color" FontSize="10" HorizontalAlignment="Stretch"/>
+                    <Button x:Name="bgColorSelect" Grid.Column="1" Click="colorSelect_OnClick" HorizontalAlignment="Stretch"></Button>
+                </Grid>
+            </StackPanel>
+        </Expander>
 
         <Expander Header="Overlay Options" d:IsExpanded="True" Margin="0, 10, 0, 0">
             <StackPanel>
@@ -48,7 +50,7 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Label Content="Overlay Text" FontSize="10" HorizontalAlignment="Stretch"/>
-                    <TextBox x:Name="textOverlay" Grid.Column="1" HorizontalAlignment="Stretch" AcceptsReturn="True" TextWrapping="NoWrap"/>
+                    <TextBox x:Name="textOverlay" Grid.Column="1" HorizontalAlignment="Stretch" AcceptsReturn="True" TextWrapping="NoWrap" TextChanged="textOverlay_TextChanged"/>
                 </Grid>
 
                 <Grid Margin="2">
@@ -69,6 +71,8 @@
                     <Button x:Name="overlayColorSelect" Grid.Column="1" Click="colorSelect_OnClick" HorizontalAlignment="Stretch"></Button>
                 </Grid>
 
+                <CheckBox x:Name="globalThemeCheck" Height="20" VerticalContentAlignment="Center" VerticalAlignment="Center" Margin="2, 6, 2, 2" Content="Use Global Theme" FontSize="10" Click="globalThemeCheck_Click"></CheckBox>
+
                 <Grid Margin="2">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
@@ -82,7 +86,7 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Overlay Position" FontSize="10" HorizontalAlignment="Stretch" Grid.ColumnSpan="4"></Label>
                     <Label Grid.Row="1" Content="Horizontal:" FontSize="10" HorizontalAlignment="Stretch"></Label>
-                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="OverlayXPos">
+                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="OverlayXPos" SelectionChanged="OverlayPos_SelectionChanged">
                         <ComboBox.Items>
                             <ComboBoxItem Content="Center"></ComboBoxItem>
                             <ComboBoxItem Content="Left"></ComboBoxItem>
@@ -90,7 +94,7 @@
                         </ComboBox.Items>
                     </ComboBox>
                     <Label Grid.Row="1" Content="Vertical:" FontSize="10" Grid.Column="2" HorizontalAlignment="Stretch"></Label>
-                    <ComboBox Grid.Row="1" Grid.Column="3" x:Name="OverlayYPos">
+                    <ComboBox Grid.Row="1" Grid.Column="3" x:Name="OverlayYPos" SelectionChanged="OverlayPos_SelectionChanged">
                         <ComboBox.Items>
                             <ComboBoxItem Content="Center"></ComboBoxItem>
                             <ComboBoxItem Content="Top"></ComboBoxItem>
@@ -116,13 +120,11 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Overlay Offset" FontSize="10" HorizontalAlignment="Stretch" Grid.ColumnSpan="4"></Label>
                     <Label Grid.Row="1" Content="X:" FontSize="10" HorizontalAlignment="Stretch"></Label>
-                    <hc:NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="OverlayXOffset"></hc:NumericUpDown>
+                    <hc:NumericUpDown Grid.Row="1" Grid.Column="1" x:Name="OverlayXOffset" ValueChanged="OverlayOffset_ValueChanged"></hc:NumericUpDown>
                     <Label Grid.Row="1" Content="Y:" FontSize="10" Grid.Column="2" HorizontalAlignment="Stretch"></Label>
-                    <hc:NumericUpDown Grid.Row="1" Grid.Column="3" x:Name="OverlayYOffset"></hc:NumericUpDown>
+                    <hc:NumericUpDown Grid.Row="1" Grid.Column="3" x:Name="OverlayYOffset" ValueChanged="OverlayOffset_ValueChanged"></hc:NumericUpDown>
                 </Grid>
             </StackPanel>
         </Expander>
-
-        <Button x:Name="buttonApply" Content="Save" Click="buttonApply_Click" Margin="2, 10, 2, 0" HorizontalAlignment="Stretch" Background="{DynamicResource PrimaryBrush}"/>
     </StackPanel>
 </UserControl>
