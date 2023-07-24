@@ -429,6 +429,9 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "UseGlobalTheme", out string globalTheme))
             {
                 bool.TryParse(globalTheme, out UseGlobal);
+            } else
+            {
+                UseGlobal = WidgetObject.WidgetManager.PreferGlobalTheme;
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
