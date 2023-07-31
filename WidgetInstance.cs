@@ -21,7 +21,7 @@ namespace PictureWidget {
             }
         }
 
-        public void ClickEvent(ClickType click_type, int x, int y) {
+        public virtual void ClickEvent(ClickType click_type, int x, int y) {
             if(click_type == ClickType.Single) {
             }
         }
@@ -351,7 +351,7 @@ namespace PictureWidget {
             DrawFrame();
         }
 
-        public void SaveSettings() {
+        public virtual void SaveSettings() {
             WidgetObject.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
@@ -369,7 +369,7 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
         }
 
-        public void LoadSettings() {
+        public virtual void LoadSettings() {
             if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out string path)) {
                 if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
                 {
