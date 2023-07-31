@@ -51,7 +51,7 @@ namespace PictureWidget {
 
         public bool UseGlobal = false;
 
-        public Color BackColor = Color.FromArgb(35, 35, 35);
+        public Color BackColor;
 
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
@@ -113,8 +113,9 @@ namespace PictureWidget {
         {
             Initialize(parent, widget_size, instance_guid);
             LoadSettings();
+            StartTask();
         }
-
+         
         public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
         {
             this.WidgetObject = parent;
@@ -126,7 +127,10 @@ namespace PictureWidget {
 
             BitmapCurrent = new Bitmap(Size.Width, Size.Height);
             OverlayFont = new Font("Basic Square 7 Solid", 20);
+        }
 
+        public void StartTask()
+        {
             pause_task = false;
             run_task = true;
 
@@ -178,7 +182,8 @@ namespace PictureWidget {
             {
                 using (Graphics g = Graphics.FromImage(BitmapCurrent))
                 {
-                    g.Clear(BackColor);
+                    Color bgColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
+                    g.Clear(bgColor);
                     Image imageToDraw = null;
 
                     if (WidgetType == PictureWidgetType.Single)
@@ -437,6 +442,9 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
             {
                 BackColor = ColorTranslator.FromHtml(bgColor);
+            } else
+            {
+                BackColor = WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor;
             }
         }
     }
