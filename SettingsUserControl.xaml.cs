@@ -72,7 +72,7 @@ namespace PictureWidget {
             switch(comboBoxType.SelectedIndex) {
                 case (int)PictureWidgetInstance.PictureWidgetType.Single:
                     OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico";
+                    ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico;*.svg";
                     bool? result = ofd.ShowDialog();
                     if(result != null && result != false) {
                         textBoxFile.Text = ofd.FileName;

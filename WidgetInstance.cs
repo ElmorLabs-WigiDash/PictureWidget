@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Svg;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -8,6 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Shapes;
 using WigiDashWidgetFramework;
 using WigiDashWidgetFramework.WidgetUtility;
+using Path = System.IO.Path;
 
 namespace PictureWidget {
     public partial class PictureWidgetInstance {
@@ -218,9 +220,16 @@ namespace PictureWidget {
                                     {
                                         cachedImage.Dispose();
                                     }
-                                    imageToDraw = Image.FromFile(ImagePath);
-                                    cachedImagePath = ImagePath;
-                                    cachedImage = imageToDraw;
+
+                                    if (Path.GetExtension(ImagePath) == ".svg")
+                                    {
+                                        imageToDraw = GetBitmapFromSvg(ImagePath);
+                                    } else
+                                    {
+                                        imageToDraw = Image.FromFile(ImagePath);
+                                        cachedImagePath = ImagePath;
+                                        cachedImage = imageToDraw;
+                                    }
                                 }
                             }
                         }
@@ -333,13 +342,16 @@ namespace PictureWidget {
             // Handle gif
             try
             {
-                using (Image img = Image.FromFile(path))
+                if (Path.GetExtension(path) == ".gif")
                 {
-                    int frames = img.GetFrameCount(FrameDimension.Time);
-                    if (frames > 1)
+                    using (Image img = Image.FromFile(path))
                     {
-                        animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
-                        current_frame = 0;
+                        int frames = img.GetFrameCount(FrameDimension.Time);
+                        if (frames > 1)
+                        {
+                            animated_gif = new AnimatedGif(img, frames, img.Width, img.Height);
+                            current_frame = 0;
+                        }
                     }
                 }
             }
@@ -350,7 +362,31 @@ namespace PictureWidget {
 
             pause_task = false;
         }
-        
+
+        private Bitmap GetBitmapFromSvg(string path)
+        {
+            var svgDocument = SvgDocument.Open(path);
+
+            svgDocument.Color = new SvgColourServer(OverlayColor);
+            svgDocument.Fill = new SvgColourServer(OverlayColor);
+
+            Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
+
+            var padding = 0;
+            var iconSize = Math.Min(bitmap.Width, bitmap.Height);
+            var scale = 0.8;
+            int iconWidth = (int)((iconSize - (padding * 2)) * scale);
+            int iconHeight = (int)((iconSize - (padding * 2)) * scale);
+            
+            Bitmap svgBitmap = svgDocument.Draw(iconWidth, iconHeight);
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.DrawImage(svgBitmap, new PointF((WidgetSize.ToSize().Width - iconWidth) / 2, (WidgetSize.ToSize().Height - iconHeight) / 2));
+            }
+
+            return bitmap;
+        }
+
         public void UpdateSettings()
         {
             DrawFrame();
