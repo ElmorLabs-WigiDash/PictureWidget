@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Color = System.Drawing.Color;
+using Path = System.IO.Path;
 
 namespace PictureWidget {
     /// <summary>
@@ -39,7 +41,7 @@ namespace PictureWidget {
             comboBoxType.Items.Add("Folder");
 
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
-            textBoxFile.Text = parent.ImagePath;
+            textBoxFile.Text = Path.GetFileName(parent.ImagePath);
 
             try {
                 bgColorSelect.Content = ColorTranslator.ToHtml(parent.BackColor);
@@ -75,7 +77,8 @@ namespace PictureWidget {
                     ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico;*.svg";
                     bool? result = ofd.ShowDialog();
                     if(result != null && result != false) {
-                        textBoxFile.Text = ofd.FileName;
+                        textBoxFile.Text = Path.GetFileName(ofd.FileName);
+                        parent.ImportImage(ofd.FileName);
                     }
                     break;
                 case (int)PictureWidgetInstance.PictureWidgetType.Folder:
@@ -110,14 +113,6 @@ namespace PictureWidget {
             overlayColorSelect.IsEnabled = !parent.UseGlobal;
             overlayFontSelect.IsEnabled = !parent.UseGlobal;
             bgColorSelect.IsEnabled = !parent.UseGlobal;
-
-            parent.SaveSettings();
-            parent.UpdateSettings();
-        }
-
-        private void textBoxFile_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            parent.LoadImage(textBoxFile.Text);
 
             parent.SaveSettings();
             parent.UpdateSettings();

@@ -332,6 +332,13 @@ namespace PictureWidget {
             pause_task = false;
         }
 
+        public void ImportImage(string importPath)
+        {
+            WidgetObject.WidgetManager.RemoveFile(this, "Image");
+            if (!WidgetObject.WidgetManager.StoreFile(this, "Image", importPath, out string outPath)) return;
+            LoadImage(outPath);
+        }
+
         public void LoadImage(string path) {
             if (!File.Exists(path)) return;
 
@@ -393,7 +400,7 @@ namespace PictureWidget {
         }
 
         public virtual void SaveSettings() {
-            WidgetObject.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
+            //WidgetObject.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
 
@@ -411,7 +418,9 @@ namespace PictureWidget {
         }
 
         public virtual void LoadSettings() {
-            if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out string path)) {
+            //if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out string path)) {
+            if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string path))
+            {
                 if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
                 {
                     int widget_type;
