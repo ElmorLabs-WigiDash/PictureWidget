@@ -334,9 +334,16 @@ namespace PictureWidget {
 
         public void ImportImage(string importPath)
         {
+            ReleaseImage();
             WidgetObject.WidgetManager.RemoveFile(this, "Image");
             if (!WidgetObject.WidgetManager.StoreFile(this, "Image", importPath, out string outPath)) return;
             LoadImage(outPath);
+        }
+
+        public void ReleaseImage()
+        {
+            ImagePath = null;
+            DrawFrame();
         }
 
         public void LoadImage(string path) {
