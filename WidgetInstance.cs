@@ -166,11 +166,14 @@ namespace PictureWidget {
                 FrameMs = 250;
 
                 while(pause_task) {
+                    if (!run_task) return;
                     Thread.Sleep(FrameMs);
                 }
 
                 DrawFrame();
                 current_frame++;
+
+                if (!run_task) return;
                 Thread.Sleep(FrameMs);
             }
         }
