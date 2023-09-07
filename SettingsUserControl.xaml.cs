@@ -85,6 +85,7 @@ namespace PictureWidget {
                     System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
                     if(fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                         textBoxFile.Text = fbd.SelectedPath;
+                        parent.LoadFolder(fbd.SelectedPath);
                     }
                     break;
             }

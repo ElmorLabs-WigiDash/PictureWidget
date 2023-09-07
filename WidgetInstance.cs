@@ -241,7 +241,7 @@ namespace PictureWidget {
                     {
                         if (current_frame > FolderImages.Count - 1)
                         {
-                            current_frame = 0;
+                            return;
                         }
 
                         if (File.Exists(FolderImages[current_frame]))
