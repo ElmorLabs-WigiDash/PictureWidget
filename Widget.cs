@@ -2,17 +2,21 @@
 using System;
 using System.Drawing;
 using WigiDashWidgetFramework.WidgetUtility;
+using System.IO;
 
 namespace PictureWidget {
     public partial class PictureWidget : IWidgetObject {
 
         // Functionality
         public string ResourcePath;
+        private Bitmap icon;
+
         public WidgetError Load(string resource_path) {
             
             this.ResourcePath = resource_path;
 
             // Load previews
+            icon = new Bitmap(Path.Combine(ResourcePath, "icon.png"));
 
             return WidgetError.NO_ERROR;
         }
@@ -36,9 +40,7 @@ namespace PictureWidget {
             Bitmap BitmapPreview = new Bitmap(size.Width, size.Height);
             using(Graphics g = Graphics.FromImage(BitmapPreview)) {
                 g.Clear(BackColor);
-                Font FontHeader = new Font("Lucida Console", 20, FontStyle.Bold);
-                SizeF str_size = g.MeasureString("Picture", FontHeader);
-                g.DrawString("Picture", FontHeader, Brushes.White, (size.Width - str_size.Width) / 2, (size.Height - str_size.Height) / 2);
+                g.DrawImageZoomedToFit(icon, size.Width, size.Height);
             }
             return BitmapPreview;
         }
