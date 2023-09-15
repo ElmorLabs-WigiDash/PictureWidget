@@ -15,7 +15,7 @@ namespace PictureWidget {
 
         private SettingsUserControl _userControl;
 
-        public UserControl GetSettingsControl() {
+        public virtual UserControl GetSettingsControl() {
             if (_userControl == null)
             {
                 _userControl = new SettingsUserControl(this);
