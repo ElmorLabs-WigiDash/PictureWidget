@@ -229,7 +229,8 @@ namespace PictureWidget {
                                         imageToDraw = GetBitmapFromSvg(ImagePath);
                                     } else
                                     {
-                                        imageToDraw = Image.FromFile(ImagePath);
+                                        byte[] imageBytes = File.ReadAllBytes(ImagePath);
+                                        imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
                                         cachedImagePath = ImagePath;
                                         cachedImage = imageToDraw;
                                     }
@@ -256,7 +257,8 @@ namespace PictureWidget {
                                 {
                                     cachedImage.Dispose();
                                 }
-                                imageToDraw = Image.FromFile(FolderImages[current_frame]);
+                                byte[] imageBytes = File.ReadAllBytes(FolderImages[current_frame]);
+                                imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
                                 cachedImagePath = FolderImages[current_frame];
                                 cachedImage = imageToDraw;
                             }
@@ -338,8 +340,10 @@ namespace PictureWidget {
         public void ImportImage(string importPath)
         {
             ReleaseImage();
+            EnterSleep();
             WidgetObject.WidgetManager.RemoveFile(this, "Image");
             if (!WidgetObject.WidgetManager.StoreFile(this, "Image", importPath, out string outPath)) return;
+            ExitSleep();
             LoadImage(outPath);
         }
 
