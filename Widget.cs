@@ -44,6 +44,8 @@ namespace PictureWidget {
             }
             return BitmapPreview;
         }
+
+        public Bitmap WidgetThumbnail => GetWidgetPreview(SupportedSizes[0]);
     }
 
 }
