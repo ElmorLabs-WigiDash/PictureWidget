@@ -26,7 +26,7 @@ namespace PictureWidget {
         }
 
         public IWidgetInstance CreateWidgetInstance(WidgetSize widget_size, Guid instance_guid) {
-            PictureWidgetInstance widget_instance = new PictureWidgetInstance(this, widget_size, instance_guid);
+            PictureWidgetInstance widget_instance = new PictureWidgetInstance(this, widget_size, instance_guid, ResourcePath);
             return widget_instance;
         }
 

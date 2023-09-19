@@ -111,17 +111,21 @@ namespace PictureWidget {
 
         private List<string> FolderImages = new List<string>();
 
-        public PictureWidgetInstance(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
+        private string _resourcePath;
+
+        public PictureWidgetInstance(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid, string resourcePath)
         {
-            Initialize(parent, widget_size, instance_guid);
+            Initialize(parent, widget_size, instance_guid, resourcePath);
             LoadSettings();
             StartTask();
         }
          
-        public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid)
+        public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid, string resourcePath)
         {
             this.WidgetObject = parent;
             this.Guid = instance_guid;
+
+            this._resourcePath = resourcePath;
 
             this.WidgetSize = widget_size;
 
@@ -414,7 +418,7 @@ namespace PictureWidget {
         }
 
         public virtual void SaveSettings() {
-            //WidgetObject.WidgetManager.StoreSetting(this, "ImagePath", ImagePath);
+            WidgetObject.WidgetManager.StoreSetting(this, "WidgetFirstRun", string.Empty);
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
 
@@ -432,10 +436,9 @@ namespace PictureWidget {
         }
 
         public virtual void LoadSettings() {
-            //if(WidgetObject.WidgetManager.LoadSetting(this, "ImagePath", out string path)) {
-            if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string path))
+            if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
             {
-                if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
+                if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string imagePath))
                 {
                     int widget_type;
                     if (int.TryParse(type, out widget_type))
@@ -443,13 +446,17 @@ namespace PictureWidget {
                         switch (widget_type)
                         {
                             case (int)PictureWidgetType.Single:
-                                LoadImage(path); break;
+                                LoadImage(imagePath); break;
                             case (int)PictureWidgetType.Folder:
-                                LoadFolder(path); break;
+                                LoadFolder(imagePath); break;
                         }
                     }
                 }
-            }            
+            }
+            else
+            {
+                ImportImage(Path.Combine(_resourcePath, "icon.png"));
+            }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))
             {

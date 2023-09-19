@@ -164,5 +164,14 @@ namespace PictureWidget {
             }
             catch { }
         }
+
+        private void clearFile_Click(object sender, RoutedEventArgs e)
+        {
+            parent.ImagePath = string.Empty;
+            textBoxFile.Text = string.Empty;
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
+        }
     }
 }
