@@ -167,6 +167,7 @@ namespace PictureWidget {
 
         private void clearFile_Click(object sender, RoutedEventArgs e)
         {
+            parent.WidgetObject.WidgetManager.RemoveFile(parent, "Image");
             parent.ImagePath = string.Empty;
             textBoxFile.Text = string.Empty;
 
