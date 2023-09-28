@@ -142,7 +142,7 @@ namespace PictureWidget {
 
             Size Size = widget_size.ToSize();
 
-            BitmapCurrent = new Bitmap(Size.Width, Size.Height);
+            BitmapCurrent = new Bitmap(Size.Width, Size.Height, PixelFormat.Format16bppRgb565);
             OverlayFont = new Font("Basic Square 7 Solid", 20);
         }
 
@@ -205,32 +205,32 @@ namespace PictureWidget {
 
                     if (WidgetType == PictureWidgetType.Single)
                     {
-                        if (ImagePath != "" && File.Exists(ImagePath))
+                        // GIF
+                        if (animated_gif != null)
                         {
-                            // GIF
-                            if (animated_gif != null)
+                            if (current_frame > animated_gif.Images.Count - 1)
                             {
-                                if (current_frame > animated_gif.Images.Count - 1)
-                                {
-                                    current_frame = 0;
-                                }
-
-                                imageToDraw = animated_gif.Images[current_frame].Image;
-                                FrameMs = animated_gif.Images[current_frame].Duration;
-
-                                // Default GIF speed
-                                if (FrameMs < 100) FrameMs = 100;
-                                else if (FrameMs < 1) FrameMs = 250;
+                                current_frame = 0;
                             }
 
-                            // Normal Image
+                            imageToDraw = animated_gif.Images[current_frame].Image;
+                            FrameMs = animated_gif.Images[current_frame].Duration;
+
+                            // Default GIF speed
+                            if (FrameMs < 100) FrameMs = 100;
+                            else if (FrameMs < 1) FrameMs = 250;
+                        }
+
+                        // Normal Image
+                        else
+                        {
+                            if (cachedImagePath == ImagePath)
+                            {
+                                imageToDraw = cachedImage;
+                            }
                             else
                             {
-                                if (cachedImagePath == ImagePath)
-                                {
-                                    imageToDraw = cachedImage;
-                                }
-                                else
+                                if (File.Exists(ImagePath))
                                 {
                                     if (cachedImage != null)
                                     {
@@ -240,12 +240,16 @@ namespace PictureWidget {
                                     if (Path.GetExtension(ImagePath) == ".svg")
                                     {
                                         imageToDraw = GetBitmapFromSvg(ImagePath);
-                                    } else
+                                    }
+                                    else
                                     {
-                                        byte[] imageBytes = File.ReadAllBytes(ImagePath);
-                                        imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                                        cachedImagePath = ImagePath;
-                                        cachedImage = imageToDraw;
+                                        try
+                                        {
+                                            byte[] imageBytes = File.ReadAllBytes(ImagePath);
+                                            imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
+                                            cachedImagePath = ImagePath;
+                                            cachedImage = imageToDraw;
+                                        } catch { }
                                     }
                                 }
                             }
@@ -270,10 +274,13 @@ namespace PictureWidget {
                                 {
                                     cachedImage.Dispose();
                                 }
-                                byte[] imageBytes = File.ReadAllBytes(FolderImages[current_frame]);
-                                imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                                cachedImagePath = FolderImages[current_frame];
-                                cachedImage = imageToDraw;
+                                try
+                                {
+                                    byte[] imageBytes = File.ReadAllBytes(FolderImages[current_frame]);
+                                    imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
+                                    cachedImagePath = FolderImages[current_frame];
+                                    cachedImage = imageToDraw;
+                                } catch { }
                             }
                             FrameMs = 5000;
                         }
@@ -400,24 +407,29 @@ namespace PictureWidget {
 
         private Bitmap GetBitmapFromSvg(string path)
         {
-            var svgDocument = SvgDocument.Open(path);
 
-            svgDocument.Color = new SvgColourServer(OverlayColor);
-            svgDocument.Fill = new SvgColourServer(OverlayColor);
+            Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height, PixelFormat.Format16bppRgb565);
 
-            Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
-
-            var padding = 0;
-            var iconSize = Math.Min(bitmap.Width, bitmap.Height);
-            var scale = 0.8;
-            int iconWidth = (int)((iconSize - (padding * 2)) * scale);
-            int iconHeight = (int)((iconSize - (padding * 2)) * scale);
-            
-            Bitmap svgBitmap = svgDocument.Draw(iconWidth, iconHeight);
-            using (Graphics g = Graphics.FromImage(bitmap))
+            try
             {
-                g.DrawImage(svgBitmap, new PointF((WidgetSize.ToSize().Width - iconWidth) / 2, (WidgetSize.ToSize().Height - iconHeight) / 2));
-            }
+                var svgDocument = SvgDocument.Open(path);
+
+                svgDocument.Color = new SvgColourServer(OverlayColor);
+                svgDocument.Fill = new SvgColourServer(OverlayColor);
+
+
+                var padding = 0;
+                var iconSize = Math.Min(bitmap.Width, bitmap.Height);
+                var scale = 0.8;
+                int iconWidth = (int)((iconSize - (padding * 2)) * scale);
+                int iconHeight = (int)((iconSize - (padding * 2)) * scale);
+
+                Bitmap svgBitmap = svgDocument.Draw(iconWidth, iconHeight);
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.DrawImage(svgBitmap, new PointF((WidgetSize.ToSize().Width - iconWidth) / 2, (WidgetSize.ToSize().Height - iconHeight) / 2));
+                }
+            } catch { }
 
             return bitmap;
         }
