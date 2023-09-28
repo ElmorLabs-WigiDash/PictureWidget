@@ -219,7 +219,8 @@ namespace PictureWidget {
                                 FrameMs = animated_gif.Images[current_frame].Duration;
 
                                 // Default GIF speed
-                                if (FrameMs < 250) FrameMs = 250;
+                                if (FrameMs < 100) FrameMs = 100;
+                                else if (FrameMs < 1) FrameMs = 250;
                             }
 
                             // Normal Image
