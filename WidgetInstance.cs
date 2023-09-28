@@ -77,7 +77,7 @@ namespace PictureWidget {
                 else if (frames < 1)
                 {
                     // No frames
-                    mImages.Add(new AnimatedGifFrame(new Bitmap(width, height), 0));
+                    mImages.Add(new AnimatedGifFrame(new Bitmap(width, height, PixelFormat.Format16bppRgb565), 0));
                 }
                 else
                 {
@@ -86,7 +86,7 @@ namespace PictureWidget {
                     for (; ; )
                     {
                         int dur = BitConverter.ToInt32(times, 4 * frame) * 10;
-                        Bitmap new_bmp = new Bitmap(width, height);
+                        Bitmap new_bmp = new Bitmap(width, height, PixelFormat.Format16bppRgb565);
                         using (Graphics g = Graphics.FromImage(new_bmp))
                         {
                             g.DrawImage(img, 0, 0, width, height);
