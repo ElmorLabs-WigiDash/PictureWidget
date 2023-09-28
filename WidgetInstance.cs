@@ -69,22 +69,33 @@ namespace PictureWidget {
             private List<AnimatedGifFrame> mImages = new List<AnimatedGifFrame>();
             PropertyItem mTimes;
             public AnimatedGif(Image img, int frames, int width, int height) {
-                //Image img = Image.FromFile(path);
-               // int frames = img.GetFrameCount(FrameDimension.Time);
-                if(frames <= 1) throw new ArgumentException("Image not animated");
-                byte[] times = img.GetPropertyItem(0x5100).Value;
-                int frame = 0;
-                for(; ; ) {
-                    int dur = BitConverter.ToInt32(times, 4 * frame) * 10;
-                    Bitmap new_bmp = new Bitmap(width, height);
-                    using(Graphics g = Graphics.FromImage(new_bmp)) {
-                        g.DrawImage(img, 0, 0, width, height);
-                    }
-                    mImages.Add(new AnimatedGifFrame(new_bmp, dur));
-                    if(++frame >= frames) break;
-                    img.SelectActiveFrame(FrameDimension.Time, frame);
+                if (frames == 1)
+                {
+                    // Not animated
+                    mImages.Add(new AnimatedGifFrame(new Bitmap(img), 0));
                 }
-                img.Dispose();
+                else if (frames < 1)
+                {
+                    // No frames
+                    mImages.Add(new AnimatedGifFrame(new Bitmap(width, height), 0));
+                }
+                else
+                {
+                    byte[] times = img.GetPropertyItem(0x5100).Value;
+                    int frame = 0;
+                    for (; ; )
+                    {
+                        int dur = BitConverter.ToInt32(times, 4 * frame) * 10;
+                        Bitmap new_bmp = new Bitmap(width, height);
+                        using (Graphics g = Graphics.FromImage(new_bmp))
+                        {
+                            g.DrawImage(img, 0, 0, width, height);
+                        }
+                        mImages.Add(new AnimatedGifFrame(new_bmp, dur));
+                        if (++frame >= frames) break;
+                        img.SelectActiveFrame(FrameDimension.Time, frame);
+                    }
+                }
             }
             public List<AnimatedGifFrame> Images { get { return mImages; } }
         }
@@ -147,8 +158,8 @@ namespace PictureWidget {
         }
 
         private void UpdateWidget() {
-            if (drawing_mutex.WaitOne(mutex_timeout))
-            {
+            //if (drawing_mutex.WaitOne(mutex_timeout))
+            //{
                 if (BitmapCurrent != null)
                 {
                     WidgetUpdatedEventArgs e = new WidgetUpdatedEventArgs();
@@ -158,8 +169,8 @@ namespace PictureWidget {
                     WidgetUpdated?.Invoke(this, e);
                 }
 
-                drawing_mutex.ReleaseMutex();
-            }
+                //drawing_mutex.ReleaseMutex();
+            //}
         }
 
         private int FrameMs = 250;
@@ -167,18 +178,15 @@ namespace PictureWidget {
         private void UpdateTask() {
             while(run_task) {
 
-                FrameMs = 250;
-
-                while(pause_task) {
-                    if (!run_task) return;
-                    Thread.Sleep(FrameMs);
-                }
-
                 DrawFrame();
                 current_frame++;
 
-                if (!run_task) return;
                 Thread.Sleep(FrameMs);
+
+                while (pause_task && run_task)
+                {
+                    Thread.Sleep(FrameMs);
+                }
             }
         }
 
@@ -211,7 +219,7 @@ namespace PictureWidget {
                                 FrameMs = animated_gif.Images[current_frame].Duration;
 
                                 // Default GIF speed
-                                if (FrameMs < 0) FrameMs = 250;
+                                if (FrameMs < 250) FrameMs = 250;
                             }
 
                             // Normal Image
@@ -270,7 +278,7 @@ namespace PictureWidget {
                         }
                         else
                         {
-                            FrameMs = 0;
+                            FrameMs = 250;
                         }
                     }
 
@@ -290,8 +298,9 @@ namespace PictureWidget {
                     g.DrawOverlay(OverlayText, overlayColor, overlayFont, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height, OverlayXOffset, OverlayYOffset, overlayFormat);
                 }
 
-                drawing_mutex.ReleaseMutex();
                 UpdateWidget();
+
+                drawing_mutex.ReleaseMutex();
             }
         }
 
