@@ -73,12 +73,18 @@ namespace PictureWidget {
         private void buttonFile_Click(object sender, RoutedEventArgs e) {
             switch(comboBoxType.SelectedIndex) {
                 case (int)PictureWidgetInstance.PictureWidgetType.Single:
-                    OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico;*.svg";
-                    bool? result = ofd.ShowDialog();
-                    if(result != null && result != false) {
-                        textBoxFile.Text = Path.GetFileName(ofd.FileName);
-                        parent.ImportImage(ofd.FileName);
+                    //OpenFileDialog ofd = new OpenFileDialog();
+                    //ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico;*.svg";
+                    //bool? result = ofd.ShowDialog();
+                    //if(result != null && result != false) {
+                    //    textBoxFile.Text = Path.GetFileName(ofd.FileName);
+                    //    parent.ImportImage(ofd.FileName);
+                    //}
+                    string result = parent.WidgetObject.WidgetManager.RequestImageSelection(string.Empty);
+                    if (result != null && result != string.Empty)
+                    {
+                        textBoxFile.Text = Path.GetFileName(result);
+                        parent.ImportImage(result);
                     }
                     break;
                 case (int)PictureWidgetInstance.PictureWidgetType.Folder:
