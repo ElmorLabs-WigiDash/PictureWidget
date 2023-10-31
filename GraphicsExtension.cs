@@ -52,29 +52,54 @@ namespace PictureWidget
             graphics.DrawImage(image, (int)xPos, (int)yPos, drawW, drawH);
         }
 
-        public static void DrawOverlay(this Graphics g, string overlayText, Color overlayColor, Font overlayFont, int width, int height, int overlayXOffset, int overlayYOffset, StringFormat stringFormat = null, bool debug = false)
+        public static bool AutoScale { get; set; } = true;
+        private const int staticXOffset = 1;
+        //private const TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
+        private static StringFormat stringFormat = new StringFormat(StringFormat.GenericDefault) { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+        public static void DrawStringAccurate(this Graphics g, string text, Font drawFont, Color color, Rectangle border, bool doWrap = false, StringFormat optFormat = null)
         {
-            // Create brushes and pens
-            Brush overlayBrush = new SolidBrush(overlayColor);
+            border.X += staticXOffset;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-            // Anti-aliasing
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-
-            // Duplicate the string format so it doesn't change the original
             StringFormat format;
-            if (stringFormat == null) format = new StringFormat(StringFormat.GenericTypographic);
-            else format = new StringFormat(stringFormat);
-
-            // Set bounding box
-            Rectangle boundingBox = new Rectangle(overlayXOffset, overlayYOffset, width - overlayXOffset, height - overlayYOffset);
-
-            // Draw the overlay
-            try
+            if (optFormat != null)
             {
-                if (debug) g.DrawRectangle(new Pen(Color.Red, 2), boundingBox);
-                g.DrawString(overlayText, overlayFont, overlayBrush, boundingBox, format);
+                format = optFormat;
             }
-            catch { }
+            else
+            {
+                format = stringFormat;
+            }
+
+            if (!doWrap) format.FormatFlags |= StringFormatFlags.NoWrap;
+
+            Font finalFont = drawFont;
+
+            if (AutoScale)
+            {
+                int fontSize = g.GetFontSize(text, border, drawFont, format);
+                finalFont = new Font(drawFont.FontFamily, fontSize);
+            }
+
+            //TextRenderer.DrawText(g, DrawStringAccurate, adjustedFont, border, color, Color.Transparent, doWrap ? flags | TextFormatFlags.WordBreak : flags);
+            g.DrawString(text, finalFont, new SolidBrush(color), border, format);
+        }
+
+        private static int GetFontSize(this Graphics g, string text, RectangleF rect, Font PreferedFont, StringFormat format, int maxFontSize = 32)
+        {
+            while (maxFontSize > 6)
+            {
+                using (var font = new Font(PreferedFont.FontFamily, maxFontSize))
+                {
+                    var calc = g.MeasureString(text, font, (int)rect.Width, format);
+                    if (calc.Height <= rect.Height && calc.Width <= rect.Width)
+                    {
+                        break;
+                    }
+                }
+                maxFontSize -= 1;
+            }
+            return maxFontSize;
         }
     }
 }

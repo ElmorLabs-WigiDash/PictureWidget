@@ -10,6 +10,7 @@ using System.Windows.Shapes;
 using WigiDashWidgetFramework;
 using WigiDashWidgetFramework.WidgetUtility;
 using Path = System.IO.Path;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace PictureWidget {
     public partial class PictureWidgetInstance {
@@ -55,8 +56,10 @@ namespace PictureWidget {
 
         public Color BackColor;
 
+        public bool OverlayWrap = true;
         public string OverlayText = string.Empty;
         public Color OverlayColor = Color.FromArgb(255, 255, 255);
+        public Color VectorColor = Color.FromArgb(255, 255, 255);
         public Font OverlayFont;
         public int OverlayXPos = 0;
         public int OverlayYPos = 0;
@@ -301,9 +304,15 @@ namespace PictureWidget {
                     StringFormat overlayFormat = new StringFormat(StringFormat.GenericTypographic);
                     overlayFormat.Alignment = GetStringAlignment(OverlayXPos);
                     overlayFormat.LineAlignment = GetStringAlignment(OverlayYPos);
-                    overlayFormat.FormatFlags = overlayFormat.FormatFlags | StringFormatFlags.NoWrap;
 
-                    g.DrawOverlay(OverlayText, overlayColor, overlayFont, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height, OverlayXOffset, OverlayYOffset, overlayFormat);
+                    Rectangle drawRect = new Rectangle(
+                        OverlayXOffset,
+                        OverlayYOffset,
+                        WidgetSize.ToSize().Width - OverlayXOffset,
+                        WidgetSize.ToSize().Height - OverlayYOffset
+                        );
+
+                    g.DrawStringAccurate(OverlayText, overlayFont, overlayColor, drawRect, OverlayWrap, overlayFormat);
                 }
 
                 UpdateWidget();
@@ -419,8 +428,8 @@ namespace PictureWidget {
             {
                 var svgDocument = SvgDocument.Open(path);
 
-                svgDocument.Color = new SvgColourServer(OverlayColor);
-                svgDocument.Fill = new SvgColourServer(OverlayColor);
+                svgDocument.Color = new SvgColourServer(VectorColor);
+                svgDocument.Fill = new SvgColourServer(VectorColor);
 
                 var padding = 0;
                 var iconSize = Math.Min(bitmap.Width, bitmap.Height);
@@ -446,8 +455,9 @@ namespace PictureWidget {
         public virtual void SaveSettings() {
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetFirstRun", string.Empty);
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
-            WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
 
+            WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
+            WidgetObject.WidgetManager.StoreSetting(this, "VectorColor", ColorTranslator.ToHtml(VectorColor));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
@@ -458,6 +468,8 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXOffset), OverlayXOffset.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYOffset), OverlayYOffset.ToString());
 
+            WidgetObject.WidgetManager.StoreSetting(this, "AutoScale", GraphicsExtension.AutoScale.ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, "WordWrap", OverlayWrap.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
         }
 
@@ -503,6 +515,11 @@ namespace PictureWidget {
                 OverlayColor = ColorTranslator.FromHtml(fgColor);
             }
 
+            if (WidgetObject.WidgetManager.LoadSetting(this, "VectorColor", out string vecColor))
+            {
+                VectorColor = ColorTranslator.FromHtml(vecColor);
+            }
+
             if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayXPos), out string overlayXPosStr))
             {
                 int.TryParse(overlayXPosStr, out OverlayXPos);
@@ -521,6 +538,21 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayYOffset), out string overlayYOffsetStr))
             {
                 int.TryParse(overlayYOffsetStr, out OverlayYOffset);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, "AutoScale", out string autoScaleTxt))
+            {
+                if (bool.TryParse(autoScaleTxt, out bool tmpScale)) {
+                    GraphicsExtension.AutoScale = tmpScale;
+                }
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, "WordWrap", out string wordWrapTxt))
+            {
+                if (bool.TryParse(wordWrapTxt, out bool tmpWrap))
+                {
+                    OverlayWrap = tmpWrap;
+                }
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "UseGlobalTheme", out string globalTheme))

@@ -37,8 +37,8 @@ namespace PictureWidget {
 
             parent = widget_instance;
 
-            comboBoxType.Items.Add("Single");
-            comboBoxType.Items.Add("Folder");
+            comboBoxType.Items.Add("Single Image");
+            comboBoxType.Items.Add("Folder Slideshow");
 
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
             textBoxFile.Text = Path.GetFileName(parent.ImagePath);
@@ -54,6 +54,12 @@ namespace PictureWidget {
                 overlayColorSelect.Content = ColorTranslator.ToHtml(parent.OverlayColor);
             } catch { }
 
+            try
+            {
+                vectorColorSelect.Content = ColorTranslator.ToHtml(parent.VectorColor);
+            }
+            catch { }
+
             overlayFontSelect.Content = new FontConverter().ConvertToInvariantString(parent.OverlayFont);
             overlayFontSelect.Tag = parent.OverlayFont;
 
@@ -64,6 +70,8 @@ namespace PictureWidget {
             OverlayYOffset.Value = parent.OverlayYOffset;
 
             globalThemeCheck.IsChecked = parent.UseGlobal;
+            wordWrapChk.IsChecked = parent.OverlayWrap;
+            autoScaleChk.IsChecked = GraphicsExtension.AutoScale;
 
             overlayColorSelect.IsEnabled = !parent.UseGlobal;
             overlayFontSelect.IsEnabled = !parent.UseGlobal;
@@ -167,6 +175,7 @@ namespace PictureWidget {
             {
                 parent.BackColor = ColorTranslator.FromHtml(bgColorSelect.Content.ToString());
                 parent.OverlayColor = ColorTranslator.FromHtml(overlayColorSelect.Content.ToString());
+                parent.VectorColor = ColorTranslator.FromHtml(vectorColorSelect.Content.ToString());
             }
             catch { }
         }
@@ -176,6 +185,22 @@ namespace PictureWidget {
             parent.WidgetObject.WidgetManager.RemoveFile(parent, "Image");
             parent.ImagePath = string.Empty;
             textBoxFile.Text = string.Empty;
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
+        }
+
+        private void autoScaleChk_Click(object sender, RoutedEventArgs e)
+        {
+            GraphicsExtension.AutoScale = autoScaleChk.IsChecked == true;
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
+        }
+
+        private void wordWrapChk_Click(object sender, RoutedEventArgs e)
+        {
+            parent.OverlayWrap = wordWrapChk.IsChecked == true;
 
             parent.SaveSettings();
             parent.UpdateSettings();
