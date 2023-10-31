@@ -178,6 +178,9 @@ namespace PictureWidget {
                 parent.VectorColor = ColorTranslator.FromHtml(vectorColorSelect.Content.ToString());
             }
             catch { }
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
         }
 
         private void clearFile_Click(object sender, RoutedEventArgs e)
