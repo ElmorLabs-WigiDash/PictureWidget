@@ -417,11 +417,10 @@ namespace PictureWidget {
         private Bitmap GetBitmapFromSvg(string path)
         {
 
-            Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height, PixelFormat.Format16bppRgb565);
-            Color bgColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor : BackColor;
+            Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.Clear(bgColor);
+                g.Clear(Color.Transparent);
             }
 
             try
