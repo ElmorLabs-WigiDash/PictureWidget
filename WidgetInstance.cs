@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -65,6 +66,7 @@ namespace PictureWidget {
         public int OverlayYPos = 0;
         public int OverlayXOffset = 0;
         public int OverlayYOffset = 0;
+        public double VectorScale = 0.8;
 
         // https://social.microsoft.com/Forums/en-US/fcb7d14d-d15b-4336-971c-94a80e34b85e/editing-animated-gifs-in-c?forum=netfxbcl
         public class AnimatedGif {
@@ -430,11 +432,9 @@ namespace PictureWidget {
                 svgDocument.Color = new SvgColourServer(VectorColor);
                 svgDocument.Fill = new SvgColourServer(VectorColor);
 
-                var padding = 0;
-                var iconSize = Math.Min(bitmap.Width, bitmap.Height);
-                var scale = 0.8;
-                int iconWidth = (int)((iconSize - (padding * 2)) * scale);
-                int iconHeight = (int)((iconSize - (padding * 2)) * scale);
+                int iconSize = Math.Min(bitmap.Width, bitmap.Height);
+                int iconWidth = (int)(iconSize * VectorScale);
+                int iconHeight = (int)(iconSize * VectorScale);
 
                 Bitmap svgBitmap = svgDocument.Draw(iconWidth, iconHeight);
                 using (Graphics g = Graphics.FromImage(bitmap))
@@ -457,6 +457,7 @@ namespace PictureWidget {
 
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
             WidgetObject.WidgetManager.StoreSetting(this, "VectorColor", ColorTranslator.ToHtml(VectorColor));
+            WidgetObject.WidgetManager.StoreSetting(this, nameof(VectorScale), VectorScale.ToString(CultureInfo.InvariantCulture));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
@@ -517,6 +518,11 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "VectorColor", out string vecColor))
             {
                 VectorColor = ColorTranslator.FromHtml(vecColor);
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, nameof(VectorScale), out string vectorScaleStr))
+            {
+                double.TryParse(vectorScaleStr, out VectorScale);
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, nameof(OverlayXPos), out string overlayXPosStr))

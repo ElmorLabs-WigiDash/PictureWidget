@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HandyControl.Data;
 using Color = System.Drawing.Color;
 using Path = System.IO.Path;
 
@@ -59,6 +60,8 @@ namespace PictureWidget {
                 vectorColorSelect.Content = ColorTranslator.ToHtml(parent.VectorColor);
             }
             catch { }
+
+            vectorScaleSelect.Value = parent.VectorScale * 100;
 
             overlayFontSelect.Content = new FontConverter().ConvertToInvariantString(parent.OverlayFont);
             overlayFontSelect.Tag = parent.OverlayFont;
@@ -204,6 +207,15 @@ namespace PictureWidget {
         private void wordWrapChk_Click(object sender, RoutedEventArgs e)
         {
             parent.OverlayWrap = wordWrapChk.IsChecked == true;
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
+        }
+
+        private void VectorScaleSelect_OnValueChanged(object sender, FunctionEventArgs<double> e)
+        {
+            if (parent == null) return;
+            parent.VectorScale = vectorScaleSelect.Value / 100;
 
             parent.SaveSettings();
             parent.UpdateSettings();
