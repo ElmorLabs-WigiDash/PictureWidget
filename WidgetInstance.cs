@@ -67,6 +67,7 @@ namespace PictureWidget {
         public int OverlayXOffset = 0;
         public int OverlayYOffset = 0;
         public double VectorScale = 0.8;
+        public bool AutoScale = true;
 
         // https://social.microsoft.com/Forums/en-US/fcb7d14d-d15b-4336-971c-94a80e34b85e/editing-animated-gifs-in-c?forum=netfxbcl
         public class AnimatedGif {
@@ -314,7 +315,7 @@ namespace PictureWidget {
                         WidgetSize.ToSize().Height - OverlayYOffset
                         );
 
-                    g.DrawStringAccurate(OverlayText, overlayFont, overlayColor, drawRect, OverlayWrap, overlayFormat);
+                    g.DrawStringAccurate(OverlayText, overlayFont, overlayColor, drawRect, OverlayWrap, overlayFormat, AutoScale);
                 }
 
                 UpdateWidget();
@@ -468,7 +469,7 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXOffset), OverlayXOffset.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayYOffset), OverlayYOffset.ToString());
 
-            WidgetObject.WidgetManager.StoreSetting(this, "AutoScale", GraphicsExtension.AutoScale.ToString());
+            WidgetObject.WidgetManager.StoreSetting(this, "AutoScale", AutoScale.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "WordWrap", OverlayWrap.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
         }
@@ -548,7 +549,7 @@ namespace PictureWidget {
             if (WidgetObject.WidgetManager.LoadSetting(this, "AutoScale", out string autoScaleTxt))
             {
                 if (bool.TryParse(autoScaleTxt, out bool tmpScale)) {
-                    GraphicsExtension.AutoScale = tmpScale;
+                    AutoScale = tmpScale;
                 }
             }
 

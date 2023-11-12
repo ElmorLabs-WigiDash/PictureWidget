@@ -52,11 +52,10 @@ namespace PictureWidget
             graphics.DrawImage(image, (int)xPos, (int)yPos, drawW, drawH);
         }
 
-        public static bool AutoScale { get; set; } = true;
         private const int staticXOffset = 1;
         //private const TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
         private static StringFormat stringFormat = new StringFormat(StringFormat.GenericDefault) { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-        public static void DrawStringAccurate(this Graphics g, string text, Font drawFont, Color color, Rectangle border, bool doWrap = false, StringFormat optFormat = null)
+        public static void DrawStringAccurate(this Graphics g, string text, Font drawFont, Color color, Rectangle border, bool doWrap = false, StringFormat optFormat = null, bool autoScale = false)
         {
             border.X += staticXOffset;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
@@ -75,7 +74,7 @@ namespace PictureWidget
 
             Font finalFont = drawFont;
 
-            if (AutoScale)
+            if (autoScale)
             {
                 int fontSize = g.GetFontSize(text, border, drawFont, format);
                 finalFont = new Font(drawFont.FontFamily, fontSize);
