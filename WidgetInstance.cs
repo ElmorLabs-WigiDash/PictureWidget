@@ -253,10 +253,11 @@ namespace PictureWidget {
                                         {
                                             byte[] imageBytes = File.ReadAllBytes(ImagePath);
                                             imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                                            cachedImagePath = ImagePath;
-                                            cachedImage = imageToDraw;
                                         } catch { }
                                     }
+
+                                    cachedImagePath = ImagePath;
+                                    cachedImage = imageToDraw;
                                 }
                             }
                         }
