@@ -326,11 +326,11 @@ namespace PictureWidget {
                 using (Graphics g = Graphics.FromImage(BitmapCurrent))
                 {
                     g.Clear(bgColor);
-                    g.DrawStringAccurate(OverlayText, overlayFont, overlayColor, drawRect, OverlayWrap, OverlayStringFormat, AutoScale);
                     if (imageToDraw != null)
                     {
                         g.DrawImageZoomedToFit(imageToDraw, WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
                     }
+                    g.DrawStringAccurate(OverlayText, overlayFont, overlayColor, drawRect, OverlayWrap, OverlayStringFormat, AutoScale);
                 }
 
                 UpdateWidget();
