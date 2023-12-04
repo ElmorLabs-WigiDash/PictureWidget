@@ -138,8 +138,15 @@ namespace PictureWidget {
             Initialize(parent, widget_size, instance_guid, resourcePath);
             LoadSettings();
             StartTask();
+
+            parent.WidgetManager.GlobalThemeUpdated += WidgetManager_GlobalThemeUpdated;
         }
-         
+
+        private void WidgetManager_GlobalThemeUpdated()
+        {
+            DrawFrame();
+        }
+
         public void Initialize(IWidgetObject parent, WidgetSize widget_size, Guid instance_guid, string resourcePath)
         {
             this.WidgetObject = parent;
@@ -211,7 +218,7 @@ namespace PictureWidget {
                 // GIF
                 if (animated_gif != null)
                 {
-                    if (current_frame > animated_gif.Images.Count - 1)
+                    if (current_frame >= animated_gif.Images.Count)
                     {
                         current_frame = 0;
                     }
@@ -222,6 +229,8 @@ namespace PictureWidget {
                     // Default GIF speed
                     if (FrameMs < 100) FrameMs = 100;
                     else if (FrameMs < 1) FrameMs = 250;
+
+                    current_frame++;
                 }
 
                 // Normal Image
@@ -292,8 +301,10 @@ namespace PictureWidget {
                 {
                     FrameMs = 250;
                 }
-            }
 
+                current_frame++;
+
+            }
 
             Color overlayColor = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFgColor : OverlayColor;
             Font overlayFont = UseGlobal ? WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryFont ?? DefaultFont : OverlayFont;
@@ -497,27 +508,6 @@ namespace PictureWidget {
         }
 
         public virtual void LoadSettings() {
-            if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
-            {
-                if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string imagePath))
-                {
-                    int widget_type;
-                    if (int.TryParse(type, out widget_type))
-                    {
-                        switch (widget_type)
-                        {
-                            case (int)PictureWidgetType.Single:
-                                LoadImage(imagePath); break;
-                            case (int)PictureWidgetType.Folder:
-                                LoadFolder(imagePath); break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ImportImage(Path.Combine(_resourcePath, "icon.png"));
-            }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayText", out string overlayText))
             {
@@ -597,6 +587,28 @@ namespace PictureWidget {
             } else
             {
                 BackColor = WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor;
+            }
+
+            if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
+            {
+                if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string imagePath))
+                {
+                    int widget_type;
+                    if (int.TryParse(type, out widget_type))
+                    {
+                        switch (widget_type)
+                        {
+                            case (int)PictureWidgetType.Single:
+                                LoadImage(imagePath); break;
+                            case (int)PictureWidgetType.Folder:
+                                LoadFolder(imagePath); break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ImportImage(Path.Combine(_resourcePath, "icon.png"));
             }
         }
     }
