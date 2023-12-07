@@ -206,6 +206,7 @@ namespace PictureWidget {
         }
 
         string cachedImagePath = "";
+        (Color?, double?) cachedVectorArgs = (null, null);
         Image cachedImage = null;
 
         private void DrawFrame()
@@ -236,7 +237,7 @@ namespace PictureWidget {
                 // Normal Image
                 else
                 {
-                    if (cachedImagePath == ImagePath)
+                    if (cachedImagePath == ImagePath && cachedVectorArgs == (VectorColor, VectorScale))
                     {
                         imageToDraw = cachedImage;
                     }
@@ -251,6 +252,7 @@ namespace PictureWidget {
 
                             if (Path.GetExtension(ImagePath) == ".svg")
                             {
+                                cachedVectorArgs = (VectorColor, VectorScale);
                                 imageToDraw = GetBitmapFromSvg(ImagePath);
                             }
                             else
