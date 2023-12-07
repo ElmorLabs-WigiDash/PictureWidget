@@ -139,6 +139,9 @@ namespace PictureWidget {
             LoadSettings();
             StartTask();
 
+            // Draw initial frame
+            DrawFrame();
+
             parent.WidgetManager.GlobalThemeUpdated += WidgetManager_GlobalThemeUpdated;
         }
 
@@ -237,7 +240,7 @@ namespace PictureWidget {
                 // Normal Image
                 else
                 {
-                    if (cachedImagePath == ImagePath && cachedVectorArgs == (VectorColor, VectorScale))
+                    if (cachedImagePath == ImagePath && cachedImage != null && cachedVectorArgs == (VectorColor, VectorScale))
                     {
                         imageToDraw = cachedImage;
                     }
@@ -266,6 +269,11 @@ namespace PictureWidget {
 
                             cachedImagePath = ImagePath;
                             cachedImage = imageToDraw;
+                        }
+                        else
+                        {
+                            // This already should be null, but for clarity
+                            imageToDraw = null;
                         }
                     }
                 }
@@ -488,7 +496,6 @@ namespace PictureWidget {
         }
 
         public virtual void SaveSettings() {
-            WidgetObject.WidgetManager.StoreSetting(this, "WidgetFirstRun", string.Empty);
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
 
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
