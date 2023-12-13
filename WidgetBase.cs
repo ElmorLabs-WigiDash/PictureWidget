@@ -20,17 +20,17 @@ namespace PictureWidget {
         }
         public string Description {
             get {
-                return "A widget for showing pictures including GIFs";
+                return "Show pictures including GIFs";
             }
         }
         public string Author {
             get {
-                return "Jon Sandström";
+                return "ElmorLabs";
             }
         }
         public string Website {
             get {
-                return "https://www.elmorlabs.com/";
+                return "https://elmorlabs.com/";
             }
         }
         public Version Version {
