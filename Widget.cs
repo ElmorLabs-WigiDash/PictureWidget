@@ -5,7 +5,7 @@ using WigiDashWidgetFramework.WidgetUtility;
 using System.IO;
 
 namespace PictureWidget {
-    public partial class PictureWidget : IWidgetObject {
+    public partial class PictureWidgetServer : IWidgetObject {
 
         // Functionality
         public string ResourcePath;

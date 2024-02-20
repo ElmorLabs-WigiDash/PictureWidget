@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 
 namespace PictureWidget {
-    public partial class PictureWidget : IWidgetObject {
+    public partial class PictureWidgetServer : IWidgetObject {
 
         // Identity
         public Guid Guid {

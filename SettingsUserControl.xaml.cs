@@ -38,8 +38,8 @@ namespace PictureWidget {
 
             parent = widget_instance;
 
-            comboBoxType.Items.Add("Single Image");
-            comboBoxType.Items.Add("Folder Slideshow");
+            comboBoxType.Items.Add(PictureWidget.Properties.Resources.SettingsUserControl_SettingsUserControl_SingleImage);
+            comboBoxType.Items.Add(PictureWidget.Properties.Resources.SettingsUserControl_SettingsUserControl_FolderSlideshow);
 
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
             textBoxFile.Text = Path.GetFileName(parent.ImagePath);
@@ -188,7 +188,7 @@ namespace PictureWidget {
 
         private void clearFile_Click(object sender, RoutedEventArgs e)
         {
-            parent.WidgetObject.WidgetManager.RemoveFile(parent, "Image");
+            parent.WidgetObject.WidgetManager.RemoveFile(parent, @"Image");
             parent.ImagePath = string.Empty;
             textBoxFile.Text = string.Empty;
 
