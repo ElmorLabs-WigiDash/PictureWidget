@@ -61,6 +61,24 @@ namespace PictureWidget.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show pictures including GIFs.
+        /// </summary>
+        public static string PictureWidgetServer_Description_ShowPicturesIncludingGIFs {
+            get {
+                return ResourceManager.GetString("PictureWidgetServer_Description_ShowPicturesIncludingGIFs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Picture.
+        /// </summary>
+        public static string PictureWidgetServer_Name_Picture {
+            get {
+                return ResourceManager.GetString("PictureWidgetServer_Name_Picture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced Options.
         /// </summary>
         public static string SettingsUserControl_AdvancedOptions {

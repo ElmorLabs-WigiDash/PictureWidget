@@ -178,4 +178,10 @@
   <data name="SettingsUserControl_SettingsUserControl_FolderSlideshow" xml:space="preserve">
     <value>Folder Slideshow</value>
   </data>
+  <data name="PictureWidgetServer_Name_Picture" xml:space="preserve">
+    <value>Picture</value>
+  </data>
+  <data name="PictureWidgetServer_Description_ShowPicturesIncludingGIFs" xml:space="preserve">
+    <value>Show pictures including GIFs</value>
+  </data>
 </root>

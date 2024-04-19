@@ -1,10 +1,11 @@
-﻿using WigiDashWidgetFramework;
-using WigiDashWidgetFramework.WidgetUtility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using WigiDashWidgetFramework;
+using WigiDashWidgetFramework.WidgetUtility;
 
-namespace PictureWidget {
+namespace PictureWidget
+{
     public partial class PictureWidgetServer : IWidgetObject {
 
         // Identity
@@ -15,12 +16,12 @@ namespace PictureWidget {
         }
         public string Name {
             get {
-                return "Picture";
+                return PictureWidget.Properties.Resources.PictureWidgetServer_Name_Picture;
             }
         }
         public string Description {
             get {
-                return "Show pictures including GIFs";
+                return PictureWidget.Properties.Resources.PictureWidgetServer_Description_ShowPicturesIncludingGIFs;
             }
         }
         public string Author {

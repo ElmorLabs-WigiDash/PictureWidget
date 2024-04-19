@@ -198,4 +198,10 @@
   <data name="SettingsUserControl_SettingsUserControl_FolderSlideshow" xml:space="preserve">
     <value>슬라이드쇼</value>
   </data>
+  <data name="PictureWidgetServer_Name_Picture" xml:space="preserve">
+    <value>사진</value>
+  </data>
+  <data name="PictureWidgetServer_Description_ShowPicturesIncludingGIFs" xml:space="preserve">
+    <value>GIF를 포함한 사진을 보여줍니다</value>
+  </data>
 </root>
