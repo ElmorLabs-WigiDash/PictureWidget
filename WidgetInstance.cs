@@ -208,11 +208,11 @@ namespace PictureWidget {
             }
         }
 
-        string cachedImagePath = "";
-        (Color?, double?) cachedVectorArgs = (null, null);
-        Image cachedImage = null;
+        public string CachedImagePath = "";
+        public Image CachedImage = null;
+        public (Color?, double?) CachedVectorArgs = (null, null);
 
-        private void DrawFrame()
+        public void DrawFrame()
         {
             
             Image imageToDraw = null;
@@ -240,22 +240,22 @@ namespace PictureWidget {
                 // Normal Image
                 else
                 {
-                    if (cachedImagePath == ImagePath && cachedImage != null && cachedVectorArgs == (VectorColor, VectorScale))
+                    if (CachedImagePath == ImagePath && CachedImage != null && CachedVectorArgs == (VectorColor, VectorScale))
                     {
-                        imageToDraw = cachedImage;
+                        imageToDraw = CachedImage;
                     }
                     else
                     {
                         if (File.Exists(ImagePath))
                         {
-                            /*if (cachedImage != null)
+                            /*if (CachedImage != null)
                             {
-                                cachedImage.Dispose();
+                                CachedImage.Dispose();
                             }*/
 
                             if (Path.GetExtension(ImagePath) == ".svg")
                             {
-                                cachedVectorArgs = (VectorColor, VectorScale);
+                                CachedVectorArgs = (VectorColor, VectorScale);
                                 imageToDraw = GetBitmapFromSvg(ImagePath);
                             }
                             else
@@ -267,8 +267,8 @@ namespace PictureWidget {
                                 } catch { }
                             }
 
-                            cachedImagePath = ImagePath;
-                            cachedImage = imageToDraw;
+                            CachedImagePath = ImagePath;
+                            CachedImage = imageToDraw;
                         }
                         else
                         {
@@ -287,22 +287,22 @@ namespace PictureWidget {
 
                 if (FolderImages.Count > 0 && File.Exists(FolderImages[current_frame]))
                 {
-                    if (cachedImagePath == FolderImages[current_frame])
+                    if (CachedImagePath == FolderImages[current_frame])
                     {
-                        imageToDraw = cachedImage;
+                        imageToDraw = CachedImage;
                     }
                     else
                     {
-                        /*if (cachedImage != null)
+                        /*if (CachedImage != null)
                         {
-                            cachedImage.Dispose();
+                            CachedImage.Dispose();
                         }*/
                         try
                         {
                             byte[] imageBytes = File.ReadAllBytes(FolderImages[current_frame]);
                             imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                            cachedImagePath = FolderImages[current_frame];
-                            cachedImage = imageToDraw;
+                            CachedImagePath = FolderImages[current_frame];
+                            CachedImage = imageToDraw;
                         } catch { }
                     }
                     FrameMs = 5000;
@@ -403,14 +403,14 @@ namespace PictureWidget {
             DrawFrame();
         }
 
-        public void ImportImage(string importPath)
+        public void ImportImage(string importPath, string fileId = "Image", bool doDraw = true)
         {
-            ReleaseImage();
+            if (doDraw) ReleaseImage();
             EnterSleep();
-            WidgetObject.WidgetManager.RemoveFile(this, "Image");
-            if (!WidgetObject.WidgetManager.StoreFile(this, "Image", importPath, out string outPath)) return;
+            WidgetObject.WidgetManager.RemoveFile(this, fileId);
+            if (!WidgetObject.WidgetManager.StoreFile(this, fileId, importPath, out string outPath)) return;
             ExitSleep();
-            LoadImage(outPath);
+            if (doDraw) LoadImage(outPath);
         }
 
         public void ReleaseImage()
@@ -419,7 +419,7 @@ namespace PictureWidget {
             DrawFrame();
         }
 
-        public void LoadImage(string path) {
+        public void LoadImage(string path, bool drawFrame = true) {
             if (!File.Exists(path)) return;
 
             pause_task = true;
@@ -456,7 +456,7 @@ namespace PictureWidget {
             DrawFrame();
         }
 
-        private Bitmap GetBitmapFromSvg(string path)
+        public Bitmap GetBitmapFromSvg(string path)
         {
 
             int iconSize = Math.Min(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
@@ -490,7 +490,7 @@ namespace PictureWidget {
             return bitmap;
         }
 
-        public void UpdateSettings()
+        public virtual void UpdateSettings()
         {
             DrawFrame();
         }
