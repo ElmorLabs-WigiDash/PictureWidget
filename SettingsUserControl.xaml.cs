@@ -106,6 +106,11 @@ namespace PictureWidget {
                     }
                     break;
             }
+
+
+            parent.SaveSettings();
+            parent.UpdateSettings();
+
         }
 
         private void overlayFontSelect_Click(object sender, RoutedEventArgs e)

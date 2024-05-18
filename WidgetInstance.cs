@@ -495,8 +495,13 @@ namespace PictureWidget {
             DrawFrame();
         }
 
-        public virtual void SaveSettings() {
+        public virtual void SaveSettings()
+        {
             WidgetObject.WidgetManager.StoreSetting(this, "WidgetType", ((int)WidgetType).ToString());
+            if (WidgetType == PictureWidgetType.Folder)
+            {
+                WidgetObject.WidgetManager.StoreSetting(this, "FolderPath", ImagePath);
+            }
 
             WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
             WidgetObject.WidgetManager.StoreSetting(this, "VectorColor", ColorTranslator.ToHtml(VectorColor));
@@ -600,18 +605,23 @@ namespace PictureWidget {
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
             {
-                if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string imagePath))
+               
+                int widget_type;
+                if (int.TryParse(type, out widget_type))
                 {
-                    int widget_type;
-                    if (int.TryParse(type, out widget_type))
+                    switch (widget_type)
                     {
-                        switch (widget_type)
-                        {
-                            case (int)PictureWidgetType.Single:
-                                LoadImage(imagePath); break;
-                            case (int)PictureWidgetType.Folder:
-                                LoadFolder(imagePath); break;
-                        }
+                        case (int)PictureWidgetType.Single:
+                            if (WidgetObject.WidgetManager.LoadFile(this, "Image", out string imagePath))
+                            {
+                                LoadImage(imagePath);
+                            }
+                            break;
+                        case (int)PictureWidgetType.Folder:
+                            if(WidgetObject.WidgetManager.LoadSetting(this, "FolderPath", out string folderPath)) { 
+                                LoadFolder(folderPath); 
+                            }
+                            break;
                     }
                 }
             }
