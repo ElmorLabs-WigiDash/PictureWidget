@@ -45,19 +45,19 @@ namespace PictureWidget {
             textBoxFile.Text = Path.GetFileName(parent.ImagePath);
 
             try {
-                bgColorSelect.Content = ColorTranslator.ToHtml(parent.BackColor);
+                bgColorSelect.Content = parent.BackColor.ToHex();
             } catch { }
 
             textOverlay.Text = parent.OverlayText;
 
             try
             {
-                overlayColorSelect.Content = ColorTranslator.ToHtml(parent.OverlayColor);
+                overlayColorSelect.Content = parent.OverlayColor.ToHex();
             } catch { }
 
             try
             {
-                vectorColorSelect.Content = ColorTranslator.ToHtml(parent.VectorColor);
+                vectorColorSelect.Content = parent.VectorColor.ToHex();
             }
             catch { }
 
@@ -174,16 +174,16 @@ namespace PictureWidget {
         {
             if (sender is Button caller)
             {
-                Color defaultColor = ColorTranslator.FromHtml(caller.Content.ToString());
+                Color defaultColor = caller.Content.ToString().ToColor();
                 Color selectedColor = parent.WidgetObject.WidgetManager.RequestColorSelection(defaultColor);
-                caller.Content = ColorTranslator.ToHtml(selectedColor);
+                caller.Content = selectedColor.ToHex();
             }
 
             try
             {
-                parent.BackColor = ColorTranslator.FromHtml(bgColorSelect.Content.ToString());
-                parent.OverlayColor = ColorTranslator.FromHtml(overlayColorSelect.Content.ToString());
-                parent.VectorColor = ColorTranslator.FromHtml(vectorColorSelect.Content.ToString());
+                parent.BackColor = bgColorSelect.Content.ToString().ToColor();
+                parent.OverlayColor = overlayColorSelect.Content.ToString().ToColor();
+                parent.VectorColor = vectorColorSelect.Content.ToString().ToColor();
             }
             catch { }
 

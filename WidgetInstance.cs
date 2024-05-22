@@ -86,7 +86,7 @@ namespace PictureWidget {
                 else if (frames < 1)
                 {
                     // No frames
-                    mImages.Add(new AnimatedGifFrame(new Bitmap(width, height, PixelFormat.Format16bppRgb565), 0));
+                    mImages.Add(new AnimatedGifFrame(new Bitmap(width, height, PixelFormat.Format32bppArgb), 0));
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace PictureWidget {
                     for (; ; )
                     {
                         int dur = BitConverter.ToInt32(times, 4 * frame) * 10;
-                        Bitmap new_bmp = new Bitmap(width, height, PixelFormat.Format16bppRgb565);
+                        Bitmap new_bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                         using (Graphics g = Graphics.FromImage(new_bmp))
                         {
                             g.DrawImage(img, 0, 0, width, height);
@@ -161,7 +161,7 @@ namespace PictureWidget {
 
             Size Size = widget_size.ToSize();
 
-            BitmapCurrent = new Bitmap(Size.Width, Size.Height, PixelFormat.Format16bppRgb565);
+            BitmapCurrent = new Bitmap(Size.Width, Size.Height, PixelFormat.Format32bppArgb);
             OverlayFont = new Font("Basic Square 7 Solid", 20);
         }
 
@@ -503,11 +503,11 @@ namespace PictureWidget {
                 WidgetObject.WidgetManager.StoreSetting(this, "FolderPath", ImagePath);
             }
 
-            WidgetObject.WidgetManager.StoreSetting(this, "BackColor", ColorTranslator.ToHtml(BackColor));
-            WidgetObject.WidgetManager.StoreSetting(this, "VectorColor", ColorTranslator.ToHtml(VectorColor));
+            WidgetObject.WidgetManager.StoreSetting(this, "BackColor", BackColor.ToHex());
+            WidgetObject.WidgetManager.StoreSetting(this, "VectorColor", VectorColor.ToHex());
             WidgetObject.WidgetManager.StoreSetting(this, nameof(VectorScale), VectorScale.ToString(CultureInfo.InvariantCulture));
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayText", OverlayText);
-            WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", ColorTranslator.ToHtml(OverlayColor));
+            WidgetObject.WidgetManager.StoreSetting(this, "OverlayColor", OverlayColor.ToHex());
             WidgetObject.WidgetManager.StoreSetting(this, "OverlayFont", new FontConverter().ConvertToInvariantString(OverlayFont));
 
             WidgetObject.WidgetManager.StoreSetting(this, nameof(OverlayXPos), OverlayXPos.ToString());
@@ -539,12 +539,12 @@ namespace PictureWidget {
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "OverlayColor", out string fgColor))
             {
-                OverlayColor = ColorTranslator.FromHtml(fgColor);
+                OverlayColor = fgColor.ToColor();
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "VectorColor", out string vecColor))
             {
-                VectorColor = ColorTranslator.FromHtml(vecColor);
+                VectorColor = vecColor.ToColor();
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, nameof(VectorScale), out string vectorScaleStr))
@@ -597,7 +597,7 @@ namespace PictureWidget {
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "BackColor", out string bgColor))
             {
-                BackColor = ColorTranslator.FromHtml(bgColor);
+                BackColor = bgColor.ToColor();
             } else
             {
                 BackColor = WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor;
