@@ -117,4 +117,91 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SettingsUserControl_ImageHeader" xml:space="preserve">
+    <value>圖片</value>
+  </data>
+  <data name="SettingsUserControl_Type" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="SettingsUserControl_Image" xml:space="preserve">
+    <value>圖片</value>
+  </data>
+  <data name="SettingsUserControl_Select" xml:space="preserve">
+    <value>選擇</value>
+  </data>
+  <data name="SettingsUserControl_DesignHeader" xml:space="preserve">
+    <value>設計</value>
+  </data>
+  <data name="SettingsUserControl_WordWrap" xml:space="preserve">
+    <value>自動換行</value>
+  </data>
+  <data name="SettingsUserControl_AutoScaleFont" xml:space="preserve">
+    <value>自動調整文字大小</value>
+  </data>
+  <data name="SettingsUserControl_UseGlobalTheme" xml:space="preserve">
+    <value>使用全域主題</value>
+  </data>
+  <data name="SettingsUserControl_Background" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="SettingsUserControl_OverlayText" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="SettingsUserControl_OverlayFont" xml:space="preserve">
+    <value>字體</value>
+  </data>
+  <data name="SettingsUserControl_OverlayColor" xml:space="preserve">
+    <value>文字顏色</value>
+  </data>
+  <data name="SettingsUserControl_VectorColor" xml:space="preserve">
+    <value>向量圖大小</value>
+  </data>
+  <data name="SettingsUserControl_VectorScale" xml:space="preserve">
+    <value>向量圖顏色</value>
+  </data>
+  <data name="SettingsUserControl_OverlayPosition" xml:space="preserve">
+    <value>文字位置</value>
+  </data>
+  <data name="SettingsUserControl_Horizontal" xml:space="preserve">
+    <value>水平:</value>
+  </data>
+  <data name="SettingsUserControl_Center" xml:space="preserve">
+    <value>置中</value>
+  </data>
+  <data name="SettingsUserControl_Left" xml:space="preserve">
+    <value>靠左</value>
+  </data>
+  <data name="SettingsUserControl_Right" xml:space="preserve">
+    <value>靠右</value>
+  </data>
+  <data name="SettingsUserControl_CenterVertical" xml:space="preserve">
+    <value>置中</value>
+  </data>
+  <data name="SettingsUserControl_Top" xml:space="preserve">
+    <value>靠上</value>
+  </data>
+  <data name="SettingsUserControl_Bottom" xml:space="preserve">
+    <value>靠下</value>
+  </data>
+  <data name="SettingsUserControl_AdvancedOptions" xml:space="preserve">
+    <value>進階設定</value>
+  </data>
+  <data name="SettingsUserControl_OverlayOffset" xml:space="preserve">
+    <value>文字偏移</value>
+  </data>
+  <data name="SettingsUserControl_Vertical" xml:space="preserve">
+    <value>垂直:</value>
+  </data>
+  <data name="SettingsUserControl_SettingsUserControl_SingleImage" xml:space="preserve">
+    <value>單張圖片</value>
+  </data>
+  <data name="SettingsUserControl_SettingsUserControl_FolderSlideshow" xml:space="preserve">
+    <value>資料夾幻燈片播放</value>
+  </data>
+  <data name="PictureWidgetServer_Name_Picture" xml:space="preserve">
+    <value>圖片</value>
+  </data>
+  <data name="PictureWidgetServer_Description_ShowPicturesIncludingGIFs" xml:space="preserve">
+    <value>顯示圖片 (包含GIF)</value>
+  </data>
 </root>
