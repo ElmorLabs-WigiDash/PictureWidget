@@ -163,7 +163,7 @@
     <value>オーバーレイ位置</value>
   </data>
   <data name="SettingsUserControl_Horizontal" xml:space="preserve">
-    <value>水平</value>
+    <value>水平:</value>
   </data>
   <data name="SettingsUserControl_Center" xml:space="preserve">
     <value>中央</value>
@@ -190,7 +190,7 @@
     <value>オーバーレイオフセット</value>
   </data>
   <data name="SettingsUserControl_Vertical" xml:space="preserve">
-    <value>縦</value>
+    <value>縦:</value>
   </data>
   <data name="SettingsUserControl_SettingsUserControl_SingleImage" xml:space="preserve">
     <value>単一画像</value>
