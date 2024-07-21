@@ -117,4 +117,91 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SettingsUserControl_ImageHeader" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="SettingsUserControl_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SettingsUserControl_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="SettingsUserControl_Select" xml:space="preserve">
+    <value>Sélectionner</value>
+  </data>
+  <data name="SettingsUserControl_DesignHeader" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="SettingsUserControl_WordWrap" xml:space="preserve">
+    <value>Word wrap</value>
+  </data>
+  <data name="SettingsUserControl_AutoScaleFont" xml:space="preserve">
+    <value>Police auto scale</value>
+  </data>
+  <data name="SettingsUserControl_UseGlobalTheme" xml:space="preserve">
+    <value>Utiliser le thème général</value>
+  </data>
+  <data name="SettingsUserControl_Background" xml:space="preserve">
+    <value>Arrière plan</value>
+  </data>
+  <data name="SettingsUserControl_OverlayText" xml:space="preserve">
+    <value>Texte de la surimpression</value>
+  </data>
+  <data name="SettingsUserControl_OverlayFont" xml:space="preserve">
+    <value>Police de la surimpression</value>
+  </data>
+  <data name="SettingsUserControl_OverlayColor" xml:space="preserve">
+    <value>Couleur de la surimpression</value>
+  </data>
+  <data name="SettingsUserControl_VectorColor" xml:space="preserve">
+    <value>Couleur vecteur</value>
+  </data>
+  <data name="SettingsUserControl_VectorScale" xml:space="preserve">
+    <value>Echelle vecteur</value>
+  </data>
+  <data name="SettingsUserControl_OverlayPosition" xml:space="preserve">
+    <value>Position de la surimpression</value>
+  </data>
+  <data name="SettingsUserControl_Horizontal" xml:space="preserve">
+    <value>Horizontale:</value>
+  </data>
+  <data name="SettingsUserControl_Center" xml:space="preserve">
+    <value>Centre</value>
+  </data>
+  <data name="SettingsUserControl_Left" xml:space="preserve">
+    <value>Gauche</value>
+  </data>
+  <data name="SettingsUserControl_Right" xml:space="preserve">
+    <value>Droite</value>
+  </data>
+  <data name="SettingsUserControl_CenterVertical" xml:space="preserve">
+    <value>Centre</value>
+  </data>
+  <data name="SettingsUserControl_Top" xml:space="preserve">
+    <value>Haut</value>
+  </data>
+  <data name="SettingsUserControl_Bottom" xml:space="preserve">
+    <value>Bas</value>
+  </data>
+  <data name="SettingsUserControl_AdvancedOptions" xml:space="preserve">
+    <value>Options avancées</value>
+  </data>
+  <data name="SettingsUserControl_OverlayOffset" xml:space="preserve">
+    <value>Décalage de la surimpression</value>
+  </data>
+  <data name="SettingsUserControl_Vertical" xml:space="preserve">
+    <value>Vertical:</value>
+  </data>
+  <data name="SettingsUserControl_SettingsUserControl_SingleImage" xml:space="preserve">
+    <value>Image unique</value>
+  </data>
+  <data name="SettingsUserControl_SettingsUserControl_FolderSlideshow" xml:space="preserve">
+    <value>Dossier diaporama</value>
+  </data>
+  <data name="PictureWidgetServer_Name_Picture" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="PictureWidgetServer_Description_ShowPicturesIncludingGIFs" xml:space="preserve">
+    <value>Montrer les images incluants les GIFs</value>
+  </data>
 </root>
