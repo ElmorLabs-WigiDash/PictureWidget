@@ -36,7 +36,7 @@ namespace PictureWidget
         }
         public Version Version {
             get {
-                return new Version(1,0,6);
+                return new Version(1,0,7);
             }
         }
 

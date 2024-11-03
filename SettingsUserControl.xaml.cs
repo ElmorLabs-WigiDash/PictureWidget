@@ -42,7 +42,15 @@ namespace PictureWidget {
             comboBoxType.Items.Add(PictureWidget.Properties.Resources.SettingsUserControl_SettingsUserControl_FolderSlideshow);
 
             comboBoxType.SelectedIndex = (int)parent.WidgetType;
-            textBoxFile.Text = Path.GetFileName(parent.ImagePath);
+            //textBoxFile.Text = Path.GetFileName(parent.ImagePath);
+            if(parent.WidgetType == PictureWidgetInstance.PictureWidgetType.Single)
+            {
+                textBoxFile.Text = Path.GetFileName(parent.ImagePath);
+            }
+            else
+            {
+                textBoxFile.Text = parent.ImagePath;
+            }
 
             try {
                 bgColorSelect.Content = ColorTranslator.ToHtml(parent.BackColor);
@@ -84,13 +92,6 @@ namespace PictureWidget {
         private void buttonFile_Click(object sender, RoutedEventArgs e) {
             switch(comboBoxType.SelectedIndex) {
                 case (int)PictureWidgetInstance.PictureWidgetType.Single:
-                    //OpenFileDialog ofd = new OpenFileDialog();
-                    //ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp;*.ico;*.svg";
-                    //bool? result = ofd.ShowDialog();
-                    //if(result != null && result != false) {
-                    //    textBoxFile.Text = Path.GetFileName(ofd.FileName);
-                    //    parent.ImportImage(ofd.FileName);
-                    //}
                     string result = parent.WidgetObject.WidgetManager.RequestImageSelection(string.Empty);
                     if (result != null && result != string.Empty)
                     {
@@ -100,7 +101,8 @@ namespace PictureWidget {
                     break;
                 case (int)PictureWidgetInstance.PictureWidgetType.Folder:
                     System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
-                    if(fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                    fbd.SelectedPath = textBoxFile.Text;
+                    if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                         textBoxFile.Text = fbd.SelectedPath;
                         parent.LoadFolder(fbd.SelectedPath);
                     }
