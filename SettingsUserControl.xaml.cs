@@ -1,21 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using HandyControl.Data;
 using Color = System.Drawing.Color;
 using Path = System.IO.Path;
@@ -87,6 +72,9 @@ namespace PictureWidget {
             overlayColorSelect.IsEnabled = !parent.UseGlobal;
             overlayFontSelect.IsEnabled = !parent.UseGlobal;
             bgColorSelect.IsEnabled = !parent.UseGlobal;
+
+            slideshowInterval.Value = (int) (parent.SlideshowInterval / 1000);
+
         }
 
         private void buttonFile_Click(object sender, RoutedEventArgs e) {
@@ -226,6 +214,14 @@ namespace PictureWidget {
 
             parent.SaveSettings();
             parent.UpdateSettings();
+        }
+
+        public void slideshowInterval_OnValueChanged(object sender, FunctionEventArgs<double> e)
+        {
+            if (parent == null) return;
+            parent.SlideshowInterval = (int) (slideshowInterval.Value * 1000);
+
+            parent.SaveSettings();
         }
     }
 }

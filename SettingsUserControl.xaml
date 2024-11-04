@@ -148,7 +148,16 @@
           <Label Grid.Row="1" Content="Y:" FontSize="10" Grid.Column="2" HorizontalAlignment="Stretch"></Label>
           <hc:NumericUpDown Grid.Row="1" Grid.Column="3" x:Name="OverlayYOffset" ValueChanged="OverlayOffset_ValueChanged"></hc:NumericUpDown>
         </Grid>
-      </StackPanel>
+
+        <Grid Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Content="Slideshow Interval (s)" FontSize="10" HorizontalAlignment="Stretch"/>
+            <hc:NumericUpDown x:Name="slideshowInterval" Maximum="60" Minimum="1" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" ValueChanged="slideshowInterval_OnValueChanged"></hc:NumericUpDown>
+        </Grid>
+    </StackPanel>
     </Expander>
   </StackPanel>
 </UserControl>

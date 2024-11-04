@@ -6,8 +6,6 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
-using System.Windows.Shapes;
 using WigiDashWidgetFramework;
 using WigiDashWidgetFramework.WidgetUtility;
 using Path = System.IO.Path;
@@ -68,6 +66,8 @@ namespace PictureWidget {
         public int OverlayYOffset = 0;
         public double VectorScale = 0.8;
         public bool AutoScale = true;
+
+        public int SlideshowInterval = 5000;
 
         private Font DefaultFont = new Font("Basic Square 7 Solid", 20);
         private StringFormat OverlayStringFormat = new StringFormat(StringFormat.GenericTypographic);
@@ -283,6 +283,9 @@ namespace PictureWidget {
                 if (current_frame >= FolderImages.Count)
                 {
                     current_frame = 0;
+
+                    // Reload folder
+                    LoadFolder(ImagePath);
                 }
 
                 if (FolderImages.Count > 0 && File.Exists(FolderImages[current_frame]))
@@ -305,7 +308,7 @@ namespace PictureWidget {
                             CachedImage = imageToDraw;
                         } catch { }
                     }
-                    FrameMs = 5000;
+                    FrameMs = SlideshowInterval;
                 }
                 else
                 {
@@ -519,6 +522,9 @@ namespace PictureWidget {
             WidgetObject.WidgetManager.StoreSetting(this, "AutoScale", AutoScale.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "WordWrap", OverlayWrap.ToString());
             WidgetObject.WidgetManager.StoreSetting(this, "UseGlobalTheme", UseGlobal.ToString());
+
+            WidgetObject.WidgetManager.StoreSetting(this, "SlideshowInterval", SlideshowInterval.ToString());
+
         }
 
         public virtual void LoadSettings() {
@@ -601,6 +607,14 @@ namespace PictureWidget {
             } else
             {
                 BackColor = WidgetObject.WidgetManager.GlobalWidgetTheme.PrimaryBgColor;
+            }
+
+            if(WidgetObject.WidgetManager.LoadSetting(this, "SlideshowInterval", out string slideshowInterval))
+            {
+                if(!int.TryParse(slideshowInterval, out SlideshowInterval))
+                {
+                    SlideshowInterval = 5000;
+                }
             }
 
             if (WidgetObject.WidgetManager.LoadSetting(this, "WidgetType", out string type))
