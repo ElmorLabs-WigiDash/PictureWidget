@@ -137,12 +137,13 @@ namespace PictureWidget {
         {
             Initialize(parent, widget_size, instance_guid, resourcePath);
             LoadSettings();
-            StartTask();
 
             // Draw initial frame
             DrawFrame();
 
             parent.WidgetManager.GlobalThemeUpdated += WidgetManager_GlobalThemeUpdated;
+
+            StartTask();
         }
 
         private void WidgetManager_GlobalThemeUpdated()
@@ -217,18 +218,21 @@ namespace PictureWidget {
             
             Image imageToDraw = null;
 
+            int local_current_frame = current_frame;
+
             if (WidgetType == PictureWidgetType.Single)
             {
                 // GIF
                 if (animated_gif != null)
                 {
-                    if (current_frame >= animated_gif.Images.Count)
+                    if (local_current_frame >= animated_gif.Images.Count)
                     {
                         current_frame = 0;
+                        local_current_frame = 0;
                     }
 
-                    imageToDraw = animated_gif.Images[current_frame].Image;
-                    FrameMs = animated_gif.Images[current_frame].Duration;
+                    imageToDraw = animated_gif.Images[local_current_frame].Image;
+                    FrameMs = animated_gif.Images[local_current_frame].Duration;
 
                     // Default GIF speed
                     if (FrameMs < 100) FrameMs = 100;
@@ -280,34 +284,35 @@ namespace PictureWidget {
             }
             else
             {
-                if (current_frame >= FolderImages.Count)
+                if (local_current_frame >= FolderImages.Count)
                 {
                     current_frame = 0;
+                    local_current_frame = 0;
 
                     // Reload folder
-                    LoadFolder(ImagePath);
+                    LoadFolder(ImagePath, false);
                 }
 
-                if (FolderImages.Count > 0 && File.Exists(FolderImages[current_frame]))
+                if (FolderImages.Count > 0 && File.Exists(FolderImages[local_current_frame]))
                 {
-                    if (CachedImagePath == FolderImages[current_frame])
+                    /*if (string.Compare(CachedImagePath, FolderImages[local_current_frame]) == 0)
                     {
                         imageToDraw = CachedImage;
                     }
                     else
-                    {
+                    {*/
                         /*if (CachedImage != null)
                         {
                             CachedImage.Dispose();
                         }*/
-                        try
-                        {
-                            byte[] imageBytes = File.ReadAllBytes(FolderImages[current_frame]);
-                            imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                            CachedImagePath = FolderImages[current_frame];
-                            CachedImage = imageToDraw;
-                        } catch { }
-                    }
+                    try
+                    {
+                        byte[] imageBytes = File.ReadAllBytes(FolderImages[local_current_frame]);
+                        imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
+                        //CachedImagePath = FolderImages[local_current_frame];
+                        //CachedImage = imageToDraw;
+                    } catch { }
+                    /*}*/
                     FrameMs = SlideshowInterval;
                 }
                 else
@@ -368,7 +373,7 @@ namespace PictureWidget {
             }
         }
 
-        public void LoadFolder(string path) {
+        public void LoadFolder(string path, bool draw_frame = true) {
             if (!Directory.Exists(path)) return;
             pause_task = true;
 
@@ -403,7 +408,7 @@ namespace PictureWidget {
 
             pause_task = false;
 
-            DrawFrame();
+            if(draw_frame) DrawFrame();
         }
 
         public void ImportImage(string importPath, string fileId = "Image", bool doDraw = true)
