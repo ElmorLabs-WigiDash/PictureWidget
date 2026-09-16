@@ -7,15 +7,12 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using WigiDashWidgetFramework;
-using WigiDashWidgetFramework.Logging;
 using WigiDashWidgetFramework.WidgetUtility;
 using Path = System.IO.Path;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace PictureWidget {
     public partial class PictureWidgetInstance {
-
-        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         // Functionality
         public void RequestUpdate() {
@@ -271,7 +268,7 @@ namespace PictureWidget {
                                 {
                                     byte[] imageBytes = File.ReadAllBytes(ImagePath);
                                     imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
-                                } catch (Exception ex) { Logger.Error(ex, $"Failed to load image from '{ImagePath}'"); }
+                                } catch { }
                             }
 
                             CachedImagePath = ImagePath;
@@ -314,7 +311,7 @@ namespace PictureWidget {
                         imageToDraw = Image.FromStream(new MemoryStream(imageBytes));
                         //CachedImagePath = FolderImages[local_current_frame];
                         //CachedImage = imageToDraw;
-                    } catch (Exception ex) { Logger.Error(ex, $"Failed to load slideshow image from '{FolderImages[local_current_frame]}'"); }
+                    } catch { }
                     /*}*/
                     FrameMs = SlideshowInterval;
                 }
@@ -407,7 +404,7 @@ namespace PictureWidget {
                         }
                     }
                 }
-            } catch (Exception ex) { Logger.Error(ex, $"Failed to enumerate image files in folder '{path}'"); }
+            } catch { }
 
             pause_task = false;
 
@@ -457,7 +454,7 @@ namespace PictureWidget {
                     }
                 }
             }
-            catch (Exception ex) { Logger.Error(ex, $"Failed to load animated GIF frames from '{path}'"); }
+            catch (Exception ex) { }
 
             ImagePath = path;
             WidgetType = PictureWidgetType.Single;
@@ -485,8 +482,8 @@ namespace PictureWidget {
 
 
                 svgBitmap = svgDocument.Draw(iconWidth, iconHeight);
-
-            } catch (Exception ex) { Logger.Error(ex, $"Failed to render SVG image from '{path}'"); }
+                
+            } catch { }
 
             Bitmap bitmap = new Bitmap(WidgetSize.ToSize().Width, WidgetSize.ToSize().Height);
             using (Graphics g = Graphics.FromImage(bitmap))
